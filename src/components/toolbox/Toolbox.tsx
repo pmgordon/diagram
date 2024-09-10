@@ -8,12 +8,13 @@ import { SelectionTable } from "./Selection";
 
 export declare interface ToolboxProps {
     setSvgDiagram: React.Dispatch<React.SetStateAction<Element | undefined>>,
+    setHoveredElement: React.Dispatch<React.SetStateAction<string>>,
     setSceneData: any
     sceneData: any
 }
 
 
-function Toolbox({ setSvgDiagram, setSceneData, sceneData }: ToolboxProps) {
+function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData }: ToolboxProps) {
 
     const [effectElements, setEffectElements] = useState([])
     
@@ -28,7 +29,7 @@ function Toolbox({ setSvgDiagram, setSceneData, sceneData }: ToolboxProps) {
                 <Grid container spacing={2}>
                     <Grid size={{ xs: 6, md: 12 }}>
                         Paths
-                        <SelectionTable effectElements={effectElements} handleEffectClicked={sceneRef.current?.handleEffectClicked} />
+                        <SelectionTable effectElements={effectElements} setHoveredElement={setHoveredElement} handleEffectClicked={sceneRef.current?.handleEffectClicked} />
                     </Grid>
                     <Grid size={{ xs: 6, md: 12 }}>
                         Scenes +

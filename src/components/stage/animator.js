@@ -1,14 +1,66 @@
 // Using a class
 export class Animator {
-    constructor(scenes, svgElement) {
+    constructor() {
         this.greetingPrefix = "Hello";
-        this.scenes = scenes;
+        this.scenes = null;
         this.dotColor = "green"
         this.count = 0;
+        this.isPaused = false;
+        this.hoverInterval = false;
+        this.lastHoverElement = false;
     }
 
     sayHello(name) {
         return `${this.greetingPrefix}, ${name}!`;
+    }
+
+    hoverElement(elementId, svgElement) {
+        if(this.hoverInterval){
+            clearInterval(this.hoverInterval);
+            this.hoverInterval = false;
+        }
+
+        if(this.lastHoverElement) {
+            const myPath = svgElement.querySelectorAll(`[diagram-effect-id="${this.lastHoverElement}"]`)[0];
+            myPath.style.display = "block"
+        }
+
+        if (elementId === ""){
+            this.lastHoverElement = false;
+            return;
+        }
+
+
+        const myPath = svgElement.querySelectorAll(`[diagram-effect-id="${elementId}"]`)[0];
+        this.lastHoverElement = elementId;
+
+        this.hoverInterval = setInterval(() => {
+            if( myPath.style.display === "none") {
+                myPath.style.display = "block"
+            }else{
+                myPath.style.display = "none"
+            }
+            
+        }, 100)
+
+        
+
+
+    }
+
+    
+
+    togglePause(svgElement){
+        if(this.isPaused){
+            svgElement.unpauseAnimations();
+            this.isPaused = false;
+            return;
+        }
+
+        svgElement.pauseAnimations();
+        this.isPaused = true;
+
+        
     }
 
     playScene(sceneData, svgElement) {
@@ -19,7 +71,6 @@ export class Animator {
         const scene = this.scenes["Initial"]
         this.clearEverything(svgElement)
         this.count++
-        console.log(this.count)
         
         if(scene.type === "chain") {
             if(scene.actions.length === 0) {
@@ -30,19 +81,15 @@ export class Animator {
     }
 
     clearEverything(svgElement) {
-        console.log(svgElement.querySelectorAll('.pg-effect'))
         svgElement.querySelectorAll('.pg-effect').forEach(e => e.remove());
-        console.log(svgElement.querySelectorAll('.pg-effect'))
     }
 
     renderDots(renderType, actions, svgElement, playCount){
         if(renderType.type === "chain") {
             // const myPath = this.svgElement.getElementById(actions[renderType.idx].pth);
-            console.log(actions);
             const myPath = svgElement.querySelectorAll(`[diagram-effect-id="${actions[renderType.idx].pth}"]`)[0];
             const speed = getDotSpeed(myPath.getTotalLength());
             const numDots = Math.ceil(speed / 500)
-            console.log(playCount)
             this.renderDot(actions[renderType.idx], 0, `${speed}ms`, renderType, actions, svgElement, playCount)
             return
         }
@@ -70,7 +117,6 @@ export class Animator {
             renderType.idx = renderType.idx + 1;
         }
         
-        // animateMotion.setAttribute("onrepeat", `renderDots(${renderType}, ${actions})`)
         animateMotion.onend = () => {
             circle.remove();
             if (this.count === playCount){

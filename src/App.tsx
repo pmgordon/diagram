@@ -15,9 +15,11 @@ function App() {
   }
   const [sceneData, setSceneData] = useState(initScene)
   const [svgDiagram, setSvgDiagram] = useState<Element | undefined>(undefined);
+  const [hoveredElement, setHoveredElement] = useState("");
 
 
-  const stageRef = useRef<{ loadSvg: (svgDiagram: Element) => void }>(null);
+  const stageRef = useRef<{ loadSvg: (svgDiagram: Element) => void , 
+                            handleEffectHover: (elementId: string) => void}>(null);
 
   useEffect(() => {
     if (svgDiagram === undefined) {
@@ -27,13 +29,20 @@ function App() {
 
   }, [svgDiagram]);
 
+  useEffect(() => {
+
+    stageRef.current?.handleEffectHover(hoveredElement);
+
+  }, [hoveredElement]);
+
+
 
   return (
     <div>
       <Box sx={{ flexGrow: 1 }}>
         <Grid container spacing={2}>
           <Grid size={4}>
-            <Toolbox setSvgDiagram={setSvgDiagram} sceneData={sceneData} setSceneData={setSceneData} />
+            <Toolbox setSvgDiagram={setSvgDiagram} sceneData={sceneData} setSceneData={setSceneData} setHoveredElement={setHoveredElement} />
           </Grid>
           <Grid size={8}>
             <Stage ref={stageRef} sceneData={sceneData} />
