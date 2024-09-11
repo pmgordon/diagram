@@ -6,8 +6,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ClearIcon from '@mui/icons-material/Clear';
-import { FormControl, IconButton, MenuItem, Select } from '@mui/material';
+import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { forwardRef, useImperativeHandle, useState } from 'react';
+import { CloudUpload } from '@mui/icons-material';
 
 
 export declare interface SceneProps {
@@ -23,16 +24,51 @@ type ActionDataType = {
 export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, ref) => {
 
     const [currentScene, setCurrentScene] = useState("Initial");
+    const [currentSceneType, setCurrentSceneType] = useState("chain");
 
-    const handleEffectClicked = (effectId: string) => {
+    const sceneForm = () => {
+        const handleChange = (event: any) => {
+            const newState = Object.assign({}, sceneData);
+            newState[currentScene].type= event.target.value;
+            setCurrentSceneType(event.target.value);
+            setSceneData(newState)
+
+        }
+        return (
+            <Box
+                component="form"
+                sx={{ '& > :not(style)': { m: 1, width: '25ch' } }}
+                noValidate
+                autoComplete="off"
+            >
+                <TextField id="standard-basic" label="Name" variant="standard" defaultValue="Default Scene" />
+                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+
+                    <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
+                    <Select
+                        labelId="demo-simple-select-standard-label"
+                        id="demo-simple-select-standard"
+                        value={currentSceneType}
+                        onChange={handleChange}
+                        label="Type"
+                    >
+                        <MenuItem value='chain'>Chain</MenuItem>
+                        <MenuItem value='view'>View</MenuItem>
+                    </Select>
+                </FormControl>
+            </Box>
+        )
+    }
+
+    const handleEffectClicked = (effectElement: any) => {
         const newEffect = {
-            "pth": effectId,
+            "pth": effectElement.id,
+            "shortName": effectElement.shortName,
             "direction": "left"
         }
         const newState = Object.assign({}, sceneData);
         newState[currentScene].actions.push(newEffect)
         setSceneData(newState)
-        console.log(effectId)
 
     }
 
@@ -49,13 +85,14 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
     }
 
     useImperativeHandle(ref, () => ({
-        handleEffectClicked: (effectId: string) => {
-            handleEffectClicked(effectId)
+        handleEffectClicked: (effectElement: any) => {
+            handleEffectClicked(effectElement)
         }
     }));
 
     return (
         <TableContainer component={Paper}>
+            {sceneForm()}
             <Table size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
@@ -72,7 +109,7 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
                             <TableCell component="th" scope="row">
-                                {effect.pth}
+                                {effect.shortName}
                             </TableCell>
                             <TableCell align="right">
                                 <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>

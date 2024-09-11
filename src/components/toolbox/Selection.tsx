@@ -19,8 +19,8 @@ export const SelectionTable = ({ effectElements, handleEffectClicked, setHovered
     let hoveredElement = null;
 
 
-    const handleClicked = (id: string) => {
-        handleEffectClicked(id)
+    const handleClicked = (effectElement: any) => {
+        handleEffectClicked(effectElement)
     }
  
     return (
@@ -32,40 +32,11 @@ export const SelectionTable = ({ effectElements, handleEffectClicked, setHovered
             onClick={() => { console.log("")}}
             onMouseOver={() => { setHoveredElement(effectElement.id) }}
             onMouseOut={() => {setHoveredElement("")}}
-            onDelete={() => {handleClicked(effectElement.id)}}
+            onDelete={() => {handleClicked(effectElement)}}
             deleteIcon={<AddIcon />}
             variant="outlined"
             />
         ))}
         </div>
-        // <TableContainer component={Paper}>
-        //     <Table size="small" aria-label="a dense table">
-        //         <TableHead>
-        //             <TableRow>
-        //                 <TableCell>Path Name</TableCell>
-        //                 <TableCell align="right"></TableCell>
-        //             </TableRow>
-        //         </TableHead>
-        //         <TableBody>
-        //             {effectElements.map((effectElement: any) => (
-        //                 <TableRow
-        //                     key={effectElement.id}
-        //                     sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-        //                     onMouseOver={() => {handleHover(effectElement.id)}}
-        //                     onMouseOut={() => {handleHoverOut()}}
-        //                 >
-        //                     <TableCell component="th" scope="row">
-        //                         {effectElement.shortName}
-        //                     </TableCell>
-        //                     <TableCell align="right">
-        //                         <IconButton onClick={() => {handleClicked(effectElement.id)}} aria-label="fingerprint" color="primary">
-        //                             <AddIcon />
-        //                         </IconButton>
-        //                     </TableCell>
-        //                 </TableRow>
-        //             ))}
-        //         </TableBody>
-        //     </Table>
-        // </TableContainer>
     );
 }
