@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import ClearIcon from '@mui/icons-material/Clear';
 import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { forwardRef, useImperativeHandle, useState } from 'react';
-import { CloudUpload } from '@mui/icons-material';
+import ColorPicker from './ColorPicker';
 
 
 export declare interface SceneProps {
@@ -18,7 +18,8 @@ export declare interface SceneProps {
 
 type ActionDataType = {
     pth: string;
-    direction: string;
+    direction: string
+    color: string
 };
 
 export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, ref) => {
@@ -64,7 +65,8 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
         const newEffect = {
             "pth": effectElement.id,
             "shortName": effectElement.shortName,
-            "direction": "left"
+            "direction": "left",
+            "color" : "#0062B1"
         }
         const newState = Object.assign({}, sceneData);
         newState[currentScene].actions.push(newEffect)
@@ -82,6 +84,14 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
         const newState = Object.assign({}, sceneData);
         newState[currentScene].actions.splice(idx, 1);
         setSceneData(newState)
+    }
+
+    const handleColorChange = (color: string, idx: number) => {
+        const newState = Object.assign({}, sceneData);
+        newState[currentScene].actions[idx].color = color;
+        console.log(newState)
+        setSceneData(newState)
+
     }
 
     useImperativeHandle(ref, () => ({
@@ -125,7 +135,7 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
                                     </Select>
                                 </FormControl>
                             </TableCell>
-                            <TableCell align="right">Red</TableCell>
+                            <TableCell align="right"><ColorPicker handleChange={handleColorChange} idx={idx} /></TableCell>
                             <TableCell align="right">
                                 <IconButton onClick={() => { handleDelete(idx) }} aria-label="fingerprint" color="primary">
                                     <ClearIcon />

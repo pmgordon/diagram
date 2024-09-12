@@ -86,7 +86,6 @@ export class Animator {
         if (renderType.type === "chain") {
             const myPath = svgElement.querySelectorAll(`[diagram-effect-id="${actions[renderType.idx].pth}"]`)[0];
             const speed = getDotSpeed(myPath.getTotalLength(), renderType.type);
-            const numDots = Math.ceil(speed / 500)
             this.renderDot(actions[renderType.idx], 0, `${speed}ms`, renderType, actions, svgElement, playCount)
             return
         }
@@ -96,7 +95,7 @@ export class Animator {
                 console.log(action);
                 const myPath = svgElement.querySelectorAll(`[diagram-effect-id="${action.pth}"]`)[0];
                 const speed = getDotSpeed(myPath.getTotalLength(), renderType.type);
-                const numDots = Math.ceil(speed / 500)
+                const numDots = Math.ceil(speed / 800)
                 const beginInterval = Math.round(speed/numDots)
                 for(let i = 0; i < numDots; i++){
                     this.renderDotView(action, `-${i*beginInterval}ms`, `${speed}ms`, svgElement)
@@ -113,7 +112,7 @@ export class Animator {
         const circle = document.createElementNS(ns, "circle");
         circle.classList.add('pg-effect')
         circle.setAttribute("r", 5);
-        circle.setAttribute("fill", this.dotColor);
+        circle.setAttribute("fill", action.color);
         myPath.insertAdjacentElement('afterend', circle);
 
         const animateMotion = document.createElementNS(ns, "animateMotion");
@@ -124,7 +123,7 @@ export class Animator {
         if (action.direction === "left") {
             animateMotion.setAttribute("keyPoints", "1;0");
             animateMotion.setAttribute("keyTimes", "0;1")
-            circle.setAttribute("fill", "red")
+            circle.setAttribute("fill", action.color)
         }
         const hrefPath = document.createElementNS(ns, "mpath");
         hrefPath.setAttribute("href", `#${myPath.id}`)
@@ -138,7 +137,7 @@ export class Animator {
         const circle = document.createElementNS(ns, "circle");
         circle.classList.add('pg-effect')
         circle.setAttribute("r", 5);
-        circle.setAttribute("fill", this.dotColor);
+        circle.setAttribute("fill", action.color);
         myPath.insertAdjacentElement('afterend', circle);
 
         const animateMotion = document.createElementNS(ns, "animateMotion");
@@ -164,7 +163,7 @@ export class Animator {
         if (action.direction === "left") {
             animateMotion.setAttribute("keyPoints", "1;0");
             animateMotion.setAttribute("keyTimes", "0;1")
-            circle.setAttribute("fill", "red")
+            circle.setAttribute("fill", action.color)
         }
         const hrefPath = document.createElementNS(ns, "mpath");
         hrefPath.setAttribute("href", `#${myPath.id}`)
