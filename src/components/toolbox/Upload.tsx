@@ -6,6 +6,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 export declare interface UploadButtonProps {
     setSvgDiagram: React.Dispatch<React.SetStateAction<Element | undefined>>
     setEffectElements: React.Dispatch<React.SetStateAction<any | undefined>>
+    setTabValue: React.Dispatch<React.SetStateAction<any | undefined>>
 }
 
 const getEffectElements = (svg : Element) => {
@@ -80,7 +81,7 @@ const reformatSVG = (svg: NodeListOf<ChildNode>) : Element => {
     return svgElement;
 }
 
-const UploadButton = ({ setSvgDiagram, setEffectElements }: UploadButtonProps) => {
+const UploadButton = ({ setSvgDiagram, setEffectElements, setTabValue }: UploadButtonProps) => {
     const htmlToNodes = (html: string) => {
         const template = document.createElement('template');
         template.innerHTML = html;
@@ -108,11 +109,9 @@ const UploadButton = ({ setSvgDiagram, setEffectElements }: UploadButtonProps) =
             const formattedSVG = reformatSVG(nodes)
             const effectElements = getEffectElements(formattedSVG);
     
-
-            
-
             setSvgDiagram(formattedSVG);
             setEffectElements(effectElements);
+            setTabValue("2")
             
             
         };

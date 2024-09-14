@@ -81,7 +81,7 @@ export const Stage = forwardRef(({ sceneData }: StageProps, ref) => {
     }));
 
     return (
-        <div>
+        <div style={{ 'textAlign' : 'center'}}>
                 <Button
                     component="label"
                     variant="outlined"

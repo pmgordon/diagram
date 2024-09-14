@@ -6,7 +6,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ClearIcon from '@mui/icons-material/Clear';
-import { Box, Button, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { FormControl, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import ColorPicker from './ColorPicker';
 
@@ -24,43 +24,6 @@ type ActionDataType = {
 
 export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, ref) => {
 
-    const [currentScene, setCurrentScene] = useState("Initial");
-    const [currentSceneType, setCurrentSceneType] = useState("chain");
-
-    const sceneForm = () => {
-        const handleChange = (event: any) => {
-            const newState = Object.assign({}, sceneData);
-            newState[currentScene].type= event.target.value;
-            setCurrentSceneType(event.target.value);
-            setSceneData(newState)
-
-        }
-        return (
-            <Box
-                component="form"
-                sx={{ '& > :not(style)': { m: 1, width: '25ch' } }}
-                noValidate
-                autoComplete="off"
-            >
-                <TextField id="standard-basic" label="Name" variant="standard" defaultValue="Default Scene" />
-                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
-
-                    <InputLabel id="demo-simple-select-standard-label">Type</InputLabel>
-                    <Select
-                        labelId="demo-simple-select-standard-label"
-                        id="demo-simple-select-standard"
-                        value={currentSceneType}
-                        onChange={handleChange}
-                        label="Type"
-                    >
-                        <MenuItem value='chain'>Chain</MenuItem>
-                        <MenuItem value='view'>View</MenuItem>
-                    </Select>
-                </FormControl>
-            </Box>
-        )
-    }
-
     const handleEffectClicked = (effectElement: any) => {
         const newEffect = {
             "pth": effectElement.id,
@@ -69,26 +32,26 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
             "color" : "#0062B1"
         }
         const newState = Object.assign({}, sceneData);
-        newState[currentScene].actions.push(newEffect)
+        newState.scenes[sceneData.currentSceneIdx].actions.push(newEffect)
         setSceneData(newState)
 
     }
 
     const handleDirectionChange = (event: any, idx: number) => {
         const newState = Object.assign({}, sceneData);
-        newState[currentScene].actions[idx].direction = event.target.value;
+        newState.scenes[sceneData.currentSceneIdx].actions[idx].direction = event.target.value;
         setSceneData(newState)
     }
 
     const handleDelete = (idx: number) => {
         const newState = Object.assign({}, sceneData);
-        newState[currentScene].actions.splice(idx, 1);
+        newState.scenes[sceneData.currentSceneIdx].actions.splice(idx, 1);
         setSceneData(newState)
     }
 
     const handleColorChange = (color: string, idx: number) => {
         const newState = Object.assign({}, sceneData);
-        newState[currentScene].actions[idx].color = color;
+        newState.scenes[sceneData.currentSceneIdx].actions[idx].color = color;
         console.log(newState)
         setSceneData(newState)
 
@@ -102,7 +65,6 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
 
     return (
         <TableContainer component={Paper}>
-            {sceneForm()}
             <Table size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
@@ -113,7 +75,7 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {sceneData[currentScene].actions.map((effect: any, idx: number) => (
+                    {sceneData.scenes[sceneData.currentSceneIdx].actions.map((effect: any, idx: number) => (
                         <TableRow
                             key={idx}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
@@ -135,7 +97,7 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
                                     </Select>
                                 </FormControl>
                             </TableCell>
-                            <TableCell align="right"><ColorPicker handleChange={handleColorChange} idx={idx} /></TableCell>
+                            <TableCell align="right"><ColorPicker handleChange={handleColorChange} color={effect.color} idx={idx} /></TableCell>
                             <TableCell align="right">
                                 <IconButton onClick={() => { handleDelete(idx) }} aria-label="fingerprint" color="primary">
                                     <ClearIcon />

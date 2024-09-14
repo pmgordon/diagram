@@ -68,7 +68,7 @@ export class Animator {
             return;
         }
         this.scenes = sceneData;
-        const scene = this.scenes["Initial"]
+        const scene = this.scenes.scenes[sceneData.currentSceneIdx]
         this.clearEverything(svgElement)
         this.count++
 
