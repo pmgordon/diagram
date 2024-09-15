@@ -17,13 +17,15 @@ export declare interface ToolboxProps {
     setHoveredElement: React.Dispatch<React.SetStateAction<string>>,
     setSceneData: any
     sceneData: any
+    tabValue: any
+    setTabValue: any
 }
 
 
-function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData }: ToolboxProps) {
+function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData, tabValue, setTabValue }: ToolboxProps) {
 
     const [effectElements, setEffectElements] = useState([])
-    const [tabValue, setTabValue] = useState('1');
+    
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         setTabValue(newValue);
     };

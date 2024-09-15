@@ -38,8 +38,6 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
         const newState = Object.assign({}, sceneData);
         newState.currentSceneIdx = newState.currentSceneIdx + direction;
         setSceneData(newState)
-
-
     }
 
     const addScene = () => {
