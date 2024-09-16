@@ -27,6 +27,7 @@ function App() {
   const [hoveredElement, setHoveredElement] = useState("");
   const [toolboxOpen, setToolboxOpen] = useState(true)
   const [tabValue, setTabValue] = useState('1');
+  const [effectElements, setEffectElements] = useState([])
 
   const handleCloseToolbox = () => {
     setToolboxOpen(false)
@@ -76,7 +77,7 @@ function App() {
                   <KeyboardDoubleArrowLeftIcon />
                 </IconButton>
               </Box>
-              <Toolbox tabValue={tabValue} setTabValue={setTabValue} setSvgDiagram={setSvgDiagram} sceneData={sceneData} setSceneData={setSceneData} setHoveredElement={setHoveredElement} />
+              <Toolbox effectElements={effectElements} setEffectElements={setEffectElements} tabValue={tabValue} setTabValue={setTabValue} setSvgDiagram={setSvgDiagram} sceneData={sceneData} setSceneData={setSceneData} setHoveredElement={setHoveredElement} />
             </Grid>
           }
           <Grid size={getStageGridSize()} sx={{ position: 'relative' }}>

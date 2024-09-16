@@ -26,6 +26,20 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
         setSceneData(newState)
     }
 
+    const isPrevDisabled = () => {
+        if (sceneData.currentSceneIdx === 0){
+            return true
+        }
+        return false
+    }
+
+    const isNextDisabled = () => {
+        if ((sceneData.currentSceneIdx + 1) === sceneData.scenes.length){
+            return true
+        }
+        return false
+    }
+
     const handleSceneChange = (direction: number) => {
         if (direction === -1 && sceneData.currentSceneIdx === 0) {
             return;
@@ -61,7 +75,7 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
             Pick Scene
             <Grid container  spacing={2}>
                 <Grid size={{ xs: 6, md: 2 }}>
-                    <IconButton onClick={() => handleSceneChange(-1)} aria-label="delete" color="primary">
+                    <IconButton disabled={isPrevDisabled()} onClick={() => handleSceneChange(-1)} aria-label="delete" color="primary">
                         <ArrowBackIosIcon />
                     </IconButton>
                 </Grid>
@@ -84,7 +98,7 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
                     </FormControl>
                 </Grid>
                 <Grid size={{ xs: 6, md: 2 }}>
-                    <IconButton onClick={() => handleSceneChange(1)}  aria-label="delete" color="primary">
+                    <IconButton disabled={isNextDisabled()} onClick={() => handleSceneChange(1)}  aria-label="delete" color="primary">
                         <ArrowForwardIosIcon />
                     </IconButton>
                 </Grid>

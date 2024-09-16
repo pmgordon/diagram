@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef } from "react";
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import { Animator } from "./animator"
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid2';
@@ -13,10 +13,35 @@ const myModuleInstance = new Animator();
 
 export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) => {
     const stageRef = useRef<HTMLDivElement>(null)
+    const [pauseDisabled, setPauseDisabled] = useState(true)
+    const [isPaused, setIsPaused] = useState(false)
+
     useEffect(() => {
         console.log(sceneData);
         console.log(myModuleInstance.playScene(sceneData, stageRef.current?.getElementsByTagName("svg")[0]));
     }, [sceneData])
+
+    const isPrevDisabled = () => {
+        if (sceneData.currentSceneIdx === 0){
+            return true
+        }
+        return false
+    }
+
+    const isNextDisabled = () => {
+        if ((sceneData.currentSceneIdx + 1) === sceneData.scenes.length){
+            return true
+        }
+        return false
+    }
+
+    const togglePause = () => {
+        if(isPaused){
+            setIsPaused(false)
+            return
+        }
+        setIsPaused(true)
+    }
 
     const getHeader = () => {
         const currentScene = sceneData.currentSceneIdx + 1;
@@ -46,6 +71,7 @@ export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) =
         }
         const currentStage = stageRef.current;
         currentStage.appendChild(svgDiagram);
+        setPauseDisabled(false)
     };
 
     const handleEffectHover = (elementId: string) => {
@@ -69,8 +95,8 @@ export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) =
           <div class="effect-wrapper">
               <div>
                 <button class="effect-button" id="effect-pause-button">Pause</button>
-                <button class="effect-button" id="previous">Previous</button>
-                <button class="effect-button" id="next">Next</button>
+                <button class="effect-button" id="effect-prev-button">Previous</button>
+                <button class="effect-button" id="effect-next-button">Next</button>
               </div>
               <div class="effect-header" id="effect-header">
                 Scene 1 of 1 - (Scene Name)
@@ -91,23 +117,43 @@ export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) =
             header.innerText = text;
           }
 
+          const disableButtons = () => {
+            const nextButton = document.getElementById('effect-next-button')
+            const prevButton = document.getElementById('effect-prev-button')
+
+            if (sceneData.currentSceneIdx == 0) {
+              prevButton.disabled = true;
+            } else {
+              prevButton.disabled = false;
+            }
+
+            if ((sceneData.currentSceneIdx + 1) == sceneData.scenes.length) {
+              nextButton.disabled = true;
+            } else {
+              nextButton.disabled = false;
+            }
+          }
+
          const animator = new Animator()
          updateHeader();
+         disableButtons();
          animator.playScene(sceneData, document.getElementById("diagram-effect-svg"));
 
          const button = document.getElementById('effect-pause-button')
          button.addEventListener("click", () => { animator.togglePause(document.getElementById("diagram-effect-svg")); });
-         const next = document.getElementById('next')
+         const next = document.getElementById('effect-next-button')
          next.addEventListener("click", () => {
            sceneData.currentSceneIdx = sceneData.currentSceneIdx + 1;
            animator.playScene(sceneData, document.getElementById("diagram-effect-svg"));
            updateHeader();
+           disableButtons();
          });
-         const prev = document.getElementById('previous')
+         const prev = document.getElementById('effect-prev-button')
          prev.addEventListener("click", () => {
            sceneData.currentSceneIdx = sceneData.currentSceneIdx - 1;
            animator.playScene(sceneData, document.getElementById("diagram-effect-svg"));
            updateHeader();
+           disableButtons();
          });
          </script>
         </html>
@@ -141,21 +187,28 @@ export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) =
                         style={{ 'marginRight': "5px" }}
                         component="label"
                         variant="outlined"
+                        disabled={pauseDisabled}
                         onClick={() => handleSave()}>Save</Button>
                     <Button
                         style={{ 'marginRight': "5px" }}
                         component="label"
                         variant="outlined"
-                        onClick={() => myModuleInstance.togglePause(stageRef.current?.getElementsByTagName("svg")[0])}>Pause</Button>
+                        disabled={pauseDisabled}
+                        onClick={() => {
+                            togglePause();
+                            myModuleInstance.togglePause(stageRef.current?.getElementsByTagName("svg")[0])
+                            }}>{isPaused ? 'Resume' : 'Pause' }</Button>
                     <Button
                         style={{ 'marginRight': "5px" }}
                         component="label"
                         variant="outlined"
+                        disabled={isPrevDisabled()}
                         onClick={() => handleSceneChange(-1)}>Previous</Button>
                     <Button
                         style={{ 'marginRight': "5px" }}
                         component="label"
                         variant="outlined"
+                        disabled={isNextDisabled()}
                         onClick={() => handleSceneChange(1)}>Next</Button>
                 </Grid>
                 <Grid size={12} spacing={2}>

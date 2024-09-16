@@ -10,10 +10,6 @@ export class Animator {
         this.lastHoverElement = false;
     }
 
-    sayHello(name) {
-        return `${this.greetingPrefix}, ${name}!`;
-    }
-
     hoverElement(elementId, svgElement) {
         if (this.hoverInterval) {
             clearInterval(this.hoverInterval);
@@ -43,12 +39,7 @@ export class Animator {
 
         }, 100)
 
-
-
-
     }
-
-
 
     togglePause(svgElement) {
         if (this.isPaused) {
@@ -138,6 +129,7 @@ export class Animator {
         circle.classList.add('pg-effect')
         circle.setAttribute("r", 5);
         circle.setAttribute("fill", action.color);
+  
         myPath.insertAdjacentElement('afterend', circle);
 
         const animateMotion = document.createElementNS(ns, "animateMotion");
