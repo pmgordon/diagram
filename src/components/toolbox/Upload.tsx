@@ -7,14 +7,16 @@ export declare interface UploadButtonProps {
     setSvgDiagram: React.Dispatch<React.SetStateAction<Element | undefined>>
     setEffectElements: React.Dispatch<React.SetStateAction<any | undefined>>
     setTabValue: React.Dispatch<React.SetStateAction<any | undefined>>
+    svgUploadDisabled: boolean
+    setSvgUploadDisabled: any
 }
 
-const getEffectElements = (svg : Element) => {
+const getEffectElements = (svg: Element) => {
     const elements = svg.querySelectorAll('[diagram-effect-id]');
     const propertyValues = Array.from(elements).map(element => ({
         id: element.getAttribute('diagram-effect-id'),
         shortName: element.getAttribute('diagram-effect-short-name')
-      }));
+    }));
     return propertyValues;
 }
 
@@ -22,14 +24,14 @@ const replaceIds = (svg: Element) => {
     const paths = Array.from(svg.getElementsByTagName("path") as HTMLCollectionOf<SVGPathElement>);
     let currentId = 0
     svg.id = "diagram-effect-svg";
-    for(const pth of paths){
-        if (pth.id === ''){
+    for (const pth of paths) {
+        if (pth.id === '') {
             pth.id = `diagram-path-effect-${currentId}`;
         }
         pth.setAttribute("diagram-effect-id", `diagram-path-effect-${currentId}`);
         pth.setAttribute("diagram-effect-short-name", `${pth.tagName} ${currentId + 1}`);
         pth.classList.add("diagram-effect");
-        currentId ++;
+        currentId++;
     }
     return svg;
 
@@ -60,18 +62,33 @@ const replaceLines = (svg: Element): Element => {
     return svg;
 }
 
-const reformatSVG = (svg: NodeListOf<ChildNode>) : Element => {
-    const elmArray = Array.from(svg);
+const reformatSVG = (svg: NodeListOf<ChildNode>, fileType: string): Element => {
+    
     let svgElement: Element | null = null;
 
-    for (const elm of elmArray) {
-        if (elm instanceof Element && elm.tagName.toLowerCase() === "svg") {
-            svgElement = elm;
-            break;
+    if (fileType === "svg"){
+        const elmArray = Array.from(svg);
+        for (const elm of elmArray) {
+            if (elm instanceof Element && elm.tagName.toLowerCase() === "svg") {
+                svgElement = elm;
+                break;
+            }
         }
     }
 
-    if (! svgElement){
+    if (fileType === "html"){
+        const elmArray = Array.from(svg);
+        for (const elm of elmArray) {
+            if (elm instanceof Element && elm.getElementsByTagName("svg").length > 0) {
+                svgElement = elm.getElementsByTagName("svg")[0];
+                break;
+            }
+        }
+    }
+
+
+
+    if (!svgElement) {
         throw new Error('No svg element found');
     }
 
@@ -81,7 +98,7 @@ const reformatSVG = (svg: NodeListOf<ChildNode>) : Element => {
     return svgElement;
 }
 
-const UploadButton = ({ setSvgDiagram, setEffectElements, setTabValue }: UploadButtonProps) => {
+const UploadButton = ({ setSvgDiagram, setEffectElements, setTabValue, setSvgUploadDisabled, svgUploadDisabled }: UploadButtonProps) => {
     const htmlToNodes = (html: string) => {
         const template = document.createElement('template');
         template.innerHTML = html;
@@ -89,11 +106,15 @@ const UploadButton = ({ setSvgDiagram, setEffectElements, setTabValue }: UploadB
     }
 
     const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+        let fileType = "svg";
         if (!e.target.files) {
             return;
         }
         const file = e.target.files[0];
-        // setFilename(name);
+
+        if (file.type === "text/html"){
+            fileType = "html";
+        }
 
         const reader = new FileReader();
         reader.onload = (evt) => {
@@ -106,14 +127,15 @@ const UploadButton = ({ setSvgDiagram, setEffectElements, setTabValue }: UploadB
             }
 
             const nodes = htmlToNodes(evt?.target?.result);
-            const formattedSVG = reformatSVG(nodes)
+            const formattedSVG = reformatSVG(nodes, fileType)
             const effectElements = getEffectElements(formattedSVG);
-    
+
             setSvgDiagram(formattedSVG);
             setEffectElements(effectElements);
+            setSvgUploadDisabled(true)
             setTabValue("2")
-            
-            
+
+
         };
         reader.readAsBinaryString(file);
     };
@@ -121,15 +143,28 @@ const UploadButton = ({ setSvgDiagram, setEffectElements, setTabValue }: UploadB
 
 
     return (
-        <Button
-            component="label"
-            variant="outlined"
-            startIcon={<UploadFileIcon />}
-            sx={{ marginRight: "1rem" }}
-        >
-            Upload SVG
-            <input type="file" accept=".svg" hidden onChange={handleFileUpload} />
-        </Button>
+        <div>
+            <Button
+                component="label"
+                variant="outlined"
+                disabled={svgUploadDisabled}
+                startIcon={<UploadFileIcon />}
+                sx={{ marginRight: "1rem" }}
+            >
+                Upload SVG
+                <input type="file" accept=".svg" hidden onChange={handleFileUpload} />
+            </Button>
+            <Button
+                component="label"
+                variant="outlined"
+                disabled={svgUploadDisabled}
+                startIcon={<UploadFileIcon />}
+                sx={{ marginRight: "1rem" }}
+            >
+                Upload Html
+                <input type="file" accept=".html" hidden onChange={handleFileUpload} />
+            </Button>
+        </div>
     )
 }
 

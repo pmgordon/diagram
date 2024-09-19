@@ -21,10 +21,12 @@ export declare interface ToolboxProps {
     setTabValue: any
     effectElements : any
     setEffectElements: any
+    svgUploadDisabled: any
+    setSvgUploadDisabled: any
 }
 
 
-function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData, tabValue, setTabValue, effectElements, setEffectElements  }: ToolboxProps) {
+function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData, tabValue, setTabValue, effectElements, setEffectElements, svgUploadDisabled, setSvgUploadDisabled  }: ToolboxProps) {
     
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         setTabValue(newValue);
@@ -46,7 +48,7 @@ function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData, ta
                         </TabList>
                     </Box>
                     <TabPanel value="1">
-                        <UploadButton setSvgDiagram={setSvgDiagram} setEffectElements={setEffectElements} setTabValue={setTabValue} />
+                        <UploadButton svgUploadDisabled={svgUploadDisabled} setSvgUploadDisabled={setSvgUploadDisabled} setSvgDiagram={setSvgDiagram} setEffectElements={setEffectElements} setTabValue={setTabValue} />
                     </TabPanel>
                     <TabPanel value="2">
                         <Box sx={{ flexGrow: 1 }}>

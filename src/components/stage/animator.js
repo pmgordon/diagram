@@ -61,12 +61,24 @@ export class Animator {
         this.scenes = sceneData;
         const scene = this.scenes.scenes[sceneData.currentSceneIdx]
         this.clearEverything(svgElement)
+        this.addCoverCircle(svgElement)
         this.count++
 
         if (scene.actions.length === 0) {
             return;
         }
         this.renderDots({ "type": scene.type, "idx": 0 }, scene.actions, svgElement, this.count)
+    }
+
+    addCoverCircle(svgElement) {
+        const ns = "http://www.w3.org/2000/svg";
+        const circle = document.createElementNS(ns, "circle");
+        circle.classList.add('pg-effect')
+        circle.setAttribute("r", 5);
+        circle.setAttribute("fill", "white");
+  
+        svgElement.insertAdjacentElement('beforeend', circle);
+
     }
 
     clearEverything(svgElement) {
