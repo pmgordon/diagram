@@ -188,7 +188,7 @@ const UploadButton = ({ setSceneData,
                 startIcon={<UploadFileIcon />}
                 sx={{ marginRight: "1rem" }}
             >
-                Upload Html
+                Upload Diagram
                 <input type="file" accept=".html" hidden onChange={handleFileUpload} />
             </Button>
         </div>
