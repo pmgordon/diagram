@@ -7,6 +7,8 @@ export declare interface UploadButtonProps {
     setSvgDiagram: React.Dispatch<React.SetStateAction<Element | undefined>>
     setEffectElements: React.Dispatch<React.SetStateAction<any | undefined>>
     setTabValue: React.Dispatch<React.SetStateAction<any | undefined>>
+    setSceneData: React.Dispatch<React.SetStateAction<any | undefined>>
+    sceneData: any
     svgUploadDisabled: boolean
     setSvgUploadDisabled: any
 }
@@ -98,11 +100,30 @@ const reformatSVG = (svg: NodeListOf<ChildNode>, fileType: string): Element => {
     return svgElement;
 }
 
-const UploadButton = ({ setSvgDiagram, setEffectElements, setTabValue, setSvgUploadDisabled, svgUploadDisabled }: UploadButtonProps) => {
+const UploadButton = ({ setSceneData, 
+                        sceneData,
+                        setSvgDiagram, 
+                        setEffectElements, 
+                        setTabValue, 
+                        setSvgUploadDisabled, 
+                        svgUploadDisabled }: UploadButtonProps) => {
     const htmlToNodes = (html: string) => {
         const template = document.createElement('template');
         template.innerHTML = html;
         return template.content.childNodes;
+    }
+
+    const handleSetScene = (htmlText: string) => {
+        const matches = htmlText.match(/const sceneData = (.*?)\n/)
+        if (!matches) {
+            return
+        }
+        const parsedScene = JSON.parse(matches[1])
+        // const newState = Object.assign({}, sceneData);
+        // newState.currentSceneIdx = 0;
+        // newState.scenes.concat(parsedScene.secenes)
+        setSceneData(parsedScene)
+
     }
 
     const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -132,6 +153,12 @@ const UploadButton = ({ setSvgDiagram, setEffectElements, setTabValue, setSvgUpl
 
             setSvgDiagram(formattedSVG);
             setEffectElements(effectElements);
+
+            if (fileType === 'html'){
+                handleSetScene(evt.target.result)
+            }
+
+
             setSvgUploadDisabled(true)
             setTabValue("2")
 

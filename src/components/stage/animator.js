@@ -95,7 +95,6 @@ export class Animator {
 
         if (renderType.type === "view") {
             for(const action of actions) {
-                console.log(action);
                 const myPath = svgElement.querySelectorAll(`[diagram-effect-id="${action.pth}"]`)[0];
                 const speed = getDotSpeed(myPath.getTotalLength(), renderType.type);
                 const numDots = Math.ceil(speed / 800)

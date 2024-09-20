@@ -48,7 +48,13 @@ function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData, ta
                         </TabList>
                     </Box>
                     <TabPanel value="1">
-                        <UploadButton svgUploadDisabled={svgUploadDisabled} setSvgUploadDisabled={setSvgUploadDisabled} setSvgDiagram={setSvgDiagram} setEffectElements={setEffectElements} setTabValue={setTabValue} />
+                        <UploadButton sceneData={sceneData} 
+                                      setSceneData={setSceneData} 
+                                      svgUploadDisabled={svgUploadDisabled}
+                                      setSvgUploadDisabled={setSvgUploadDisabled} 
+                                      setSvgDiagram={setSvgDiagram} 
+                                      setEffectElements={setEffectElements} 
+                                      setTabValue={setTabValue} />
                     </TabPanel>
                     <TabPanel value="2">
                         <Box sx={{ flexGrow: 1 }}>

@@ -18,7 +18,6 @@ export const SelectionTable = ({ effectElements, handleEffectClicked, setHovered
 
     let hoveredElement = null;
 
-
     const handleClicked = (effectElement: any) => {
         handleEffectClicked(effectElement)
     }

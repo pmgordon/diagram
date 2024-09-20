@@ -17,8 +17,7 @@ export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) =
     const [isPaused, setIsPaused] = useState(false)
 
     useEffect(() => {
-        console.log(sceneData);
-        console.log(myModuleInstance.playScene(sceneData, stageRef.current?.getElementsByTagName("svg")[0]));
+        myModuleInstance.playScene(sceneData, stageRef.current?.getElementsByTagName("svg")[0]);
     }, [sceneData])
 
     const isPrevDisabled = () => {
@@ -172,6 +171,7 @@ export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) =
     useImperativeHandle(ref, () => ({
         loadSvg: (svgDiagram: Element) => {
             loadSvg(svgDiagram)
+            myModuleInstance.playScene(sceneData, stageRef.current?.getElementsByTagName("svg")[0])
         },
 
         handleEffectHover: (elementId: string) => {
