@@ -49,7 +49,7 @@ const replaceLines = (svg: Element): Element => {
         const x1 = line.x1.baseVal.valueAsString;
         const x2 = line.x2.baseVal.valueAsString;
         const y1 = line.y1.baseVal.valueAsString;
-        const y2 = line.y1.baseVal.valueAsString;
+        const y2 = line.y2.baseVal.valueAsString;
         const d = `M ${x1} ${y1} L ${x2} ${y2}`
         replacementPath.setAttribute("d", d)
         // Transfer other attributes from the line (like stroke, etc.)
