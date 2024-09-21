@@ -11,6 +11,7 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { FormControl, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import ColorPicker from './ColorPicker';
+import { addEffectToScene } from '../../services/util';
 
 
 export declare interface SceneProps {
@@ -41,16 +42,7 @@ export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneDa
 
 
     const handleEffectClicked = (effectElement: any) => {
-        const newEffect = {
-            "pth": effectElement.id,
-            "shortName": effectElement.shortName,
-            "direction": "left",
-            "color" : "#0062B1"
-        }
-        const newState = Object.assign({}, sceneData);
-        newState.scenes[sceneData.currentSceneIdx].actions.push(newEffect)
-        setSceneData(newState)
-
+        addEffectToScene(sceneData, setSceneData , effectElement)
     }
 
     const handleDirectionChange = (event: any, idx: number) => {

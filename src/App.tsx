@@ -61,9 +61,7 @@ function App() {
   }, [svgDiagram]);
 
   useEffect(() => {
-
     stageRef.current?.handleEffectHover(hoveredElement);
-
   }, [hoveredElement]);
 
 
@@ -102,7 +100,12 @@ function App() {
                 </IconButton>
               </Box>
           }
-            <Stage ref={stageRef} sceneData={sceneData} diagramHoveredElement={diagramHoveredElement} setDiagramHoveredElement={setDiagramHoveredElement} setSceneData={setSceneData} />
+            <Stage ref={stageRef} 
+                   sceneData={sceneData} 
+                   diagramHoveredElement={diagramHoveredElement} 
+                   setDiagramHoveredElement={setDiagramHoveredElement} 
+                   setSceneData={setSceneData} 
+                   effectElements={effectElements}/>
           </Grid>
         </Grid>
       </Box>
