@@ -34,9 +34,9 @@ class ColorPicker extends React.Component<any, any> {
     const styles = reactCSS({
       'default': {
         color: {
-          width: '36px',
-          height: '14px',
-          borderRadius: '2px',
+          width: '15px',
+          height: '15px',
+          borderRadius: '12px',
           background: `${this.props.color}`,
         },
         swatch: {
@@ -58,11 +58,14 @@ class ColorPicker extends React.Component<any, any> {
           bottom: '0px',
           left: '0px',
         },
+        outer: {
+          textAlign: 'center' as const
+        },
       },
     });
 
     return (
-      <div>
+      <div style={styles.outer} >
         <div style={ styles.swatch } onClick={ this.handleClick }>
           <div style={ styles.color } />
         </div>

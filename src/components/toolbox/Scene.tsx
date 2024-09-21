@@ -6,6 +6,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import ClearIcon from '@mui/icons-material/Clear';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { FormControl, IconButton, MenuItem, Select, TextField } from '@mui/material';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import ColorPicker from './ColorPicker';
@@ -14,6 +16,7 @@ import ColorPicker from './ColorPicker';
 export declare interface SceneProps {
     setSceneData: any
     sceneData: any
+    setHoveredElement: any
 }
 
 type ActionDataType = {
@@ -22,7 +25,20 @@ type ActionDataType = {
     color: string
 };
 
-export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, ref) => {
+function array_move(arr: any, old_index: number, new_index: number) {
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    return arr;
+};
+
+
+export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneData }: SceneProps, ref) => {
+
 
     const handleEffectClicked = (effectElement: any) => {
         const newEffect = {
@@ -57,6 +73,40 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
 
     }
 
+    const moveDisabled = (idx: number, direction: number) => {
+        if (idx === 0 && direction === -1 ) {
+            return true
+        }
+        if (idx === (sceneData.scenes[sceneData.currentSceneIdx].actions.length - 1) && direction === 1){
+            return true
+        }
+        return false
+    }
+
+    const handleMove = (idx: number, direction: number) => {
+        if (idx === 0 && direction === -1) {
+            return;
+        }
+
+        if (idx === (sceneData.scenes[sceneData.currentSceneIdx].actions.length - 1) && direction === 1) {
+            return;
+        }
+        const newState = Object.assign({}, sceneData);
+        let newArray = Object.assign([], sceneData.scenes[sceneData.currentSceneIdx].actions);
+
+        if (direction === -1) {
+            newArray = array_move(newArray, idx, idx-1)
+        }
+
+        if (direction === 1) {
+            newArray = array_move(newArray, idx, idx+1)
+        }
+        
+        newState.scenes[newState.currentSceneIdx].actions = newArray
+        setSceneData(newState)
+    }
+    
+
     useImperativeHandle(ref, () => ({
         handleEffectClicked: (effectElement: any) => {
             handleEffectClicked(effectElement)
@@ -68,6 +118,7 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
             <Table size="small" aria-label="a dense table">
                 <TableHead>
                     <TableRow>
+                        <TableCell></TableCell>
                         <TableCell>Path</TableCell>
                         <TableCell align="right">Direction</TableCell>
                         <TableCell align="right">Color</TableCell>
@@ -80,11 +131,22 @@ export const SceneTable = forwardRef(({ setSceneData, sceneData }: SceneProps, r
                             key={idx}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                            <TableCell component="th" scope="row">
+                                <TableCell component="th" scope="row">
+                                    <IconButton onClick={() => { handleMove(idx, -1) }} disabled={moveDisabled(idx, -1)} aria-label="fingerprint" color="primary">
+                                        <KeyboardArrowUpIcon />
+                                    </IconButton>
+                                    <IconButton onClick={() => { handleMove(idx, 1) }} disabled={moveDisabled(idx, 1)} aria-label="fingerprint" color="primary">
+                                        <KeyboardArrowDownIcon />
+                                    </IconButton>
+                                </TableCell>
+                            <TableCell 
+                            onMouseOver={() => { setHoveredElement(effect.pth) }}
+                            onMouseOut={() => {setHoveredElement("")}}
+                            component="th" scope="row">
                                 {effect.shortName}
                             </TableCell>
                             <TableCell align="right">
-                                <FormControl variant="standard" sx={{ m: 1, minWidth: 120 }}>
+                                <FormControl variant="standard" sx={{ m: 1, minWidth: 65 }}>
                                     <Select
                                         labelId="demo-simple-select-standard-label"
                                         id="demo-simple-select-standard"

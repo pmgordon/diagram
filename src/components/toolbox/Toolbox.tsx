@@ -67,7 +67,7 @@ function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData, ta
                                     <SelectionTable effectElements={effectElements} setHoveredElement={setHoveredElement} handleEffectClicked={sceneRef.current?.handleEffectClicked} />
                                 </Grid>
                                 <Grid size={{ xs: 6, md: 12 }}>
-                                    <SceneTable ref={sceneRef} sceneData={sceneData} setSceneData={setSceneData} />
+                                    <SceneTable ref={sceneRef} sceneData={sceneData} setSceneData={setSceneData}  setHoveredElement={setHoveredElement} />
                                 </Grid>
                             </Grid>
                         </Box>

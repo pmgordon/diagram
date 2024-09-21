@@ -53,6 +53,17 @@ export const ReOrder = ({ setSceneData, sceneData }: ReOrderProps) => {
         setSceneData(newState)
     }
 
+    const moveDisabled = (idx: number, direction: number) => {
+        if (idx === 0 && direction === -1) {
+            return true;
+        }
+
+        if (idx === (sceneData.scenes.length - 1) && direction === 1) {
+            return true;
+        }
+        return false
+    }
+
     const handleMove = (idx: number, direction: number) => {
         if (idx === 0 && direction === -1) {
             return;
@@ -77,8 +88,6 @@ export const ReOrder = ({ setSceneData, sceneData }: ReOrderProps) => {
             }
         }
 
-
-
         newState.scenes = array_move(newState.scenes, idx, idx + direction)
         setSceneData(newState)
     }
@@ -102,10 +111,10 @@ export const ReOrder = ({ setSceneData, sceneData }: ReOrderProps) => {
                                 sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                             >
                                 <TableCell component="th" scope="row">
-                                    <IconButton onClick={() => { handleMove(idx, -1) }} aria-label="fingerprint" color="primary">
+                                    <IconButton onClick={() => { handleMove(idx, -1) }} disabled={moveDisabled(idx, -1)} aria-label="fingerprint" color="primary">
                                         <KeyboardArrowUpIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => { handleMove(idx, 1) }} aria-label="fingerprint" color="primary">
+                                    <IconButton onClick={() => { handleMove(idx, 1) }} disabled={moveDisabled(idx, 1)} aria-label="fingerprint" color="primary">
                                         <KeyboardArrowDownIcon />
                                     </IconButton>
                                 </TableCell>

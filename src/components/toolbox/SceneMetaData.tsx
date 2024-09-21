@@ -2,6 +2,7 @@
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 
 import { Box, Button, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material";
@@ -27,14 +28,14 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
     }
 
     const isPrevDisabled = () => {
-        if (sceneData.currentSceneIdx === 0){
+        if (sceneData.currentSceneIdx === 0) {
             return true
         }
         return false
     }
 
     const isNextDisabled = () => {
-        if ((sceneData.currentSceneIdx + 1) === sceneData.scenes.length){
+        if ((sceneData.currentSceneIdx + 1) === sceneData.scenes.length) {
             return true
         }
         return false
@@ -45,7 +46,7 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
             return;
         }
 
-        if (direction === 1 && sceneData.currentSceneIdx === sceneData.scenes.length -1 ) {
+        if (direction === 1 && sceneData.currentSceneIdx === sceneData.scenes.length - 1) {
             return;
         }
 
@@ -55,11 +56,26 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
     }
 
     const addScene = () => {
-        const newScene =       {
-            "sceneName" : `Scene ${sceneData.scenes.length + 1}`,
+        const newScene = {
+            "sceneName": `Scene ${sceneData.scenes.length + 1}`,
             "type": "chain",
             "actions": []
-          }
+        }
+        const newState = Object.assign({}, sceneData);
+        newState.scenes.push(newScene)
+        newState.currentSceneIdx = sceneData.scenes.length - 1
+        setSceneData(newState)
+    }
+
+    const copyScene = () => {
+        const sceneActions = Object.assign([], sceneData.scenes[sceneData.currentSceneIdx].actions);
+        const newScene = {
+            "type":  sceneData.scenes[sceneData.currentSceneIdx].type,
+            "sceneName": `Scene ${sceneData.scenes.length + 1}`,
+            "actions" : sceneActions
+        }
+        
+
         const newState = Object.assign({}, sceneData);
         newState.scenes.push(newScene)
         newState.currentSceneIdx = sceneData.scenes.length - 1
@@ -72,9 +88,8 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
             noValidate
             autoComplete="off"
         >
-            Pick Scene
-            <Grid container  spacing={2}>
-                <Grid size={{ xs: 6, md: 2 }}>
+            <Grid container spacing={2}>
+                <Grid size={{ xs: 6, md: 1 }}>
                     <IconButton disabled={isPrevDisabled()} onClick={() => handleSceneChange(-1)} aria-label="delete" color="primary">
                         <ArrowBackIosIcon />
                     </IconButton>
@@ -97,12 +112,15 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
                         </Select>
                     </FormControl>
                 </Grid>
-                <Grid size={{ xs: 6, md: 2 }}>
-                    <IconButton disabled={isNextDisabled()} onClick={() => handleSceneChange(1)}  aria-label="delete" color="primary">
+                <Grid size={{ xs: 6, md: 1 }}>
+                    <IconButton disabled={isNextDisabled()} onClick={() => handleSceneChange(1)} aria-label="delete" color="primary">
                         <ArrowForwardIosIcon />
                     </IconButton>
                 </Grid>
-                <Grid size={{ xs: 6, md: 2 }}>
+                <Grid size={{ xs: 6, md: 4 }}>
+                    <IconButton aria-label="delete" color="primary" onClick={copyScene}>
+                        <ContentCopyIcon />
+                    </IconButton>
                     <IconButton aria-label="delete" color="primary" onClick={addScene}>
                         <AddCircleOutlineIcon />
                     </IconButton>

@@ -158,7 +158,6 @@ const UploadButton = ({ setSceneData,
                 handleSetScene(evt.target.result)
             }
 
-
             setSvgUploadDisabled(true)
             setTabValue("2")
 
