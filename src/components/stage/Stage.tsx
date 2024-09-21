@@ -3,20 +3,32 @@ import { Animator } from "./animator"
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid2';
 import { Typography } from "@mui/material";
+import { addEffectToScene } from "../../services/util";
 
 export declare interface StageProps {
     sceneData: any
     setSceneData: any
     setDiagramHoveredElement: any
     diagramHoveredElement: any
+    effectElements: any,
 }
 
 const myModuleInstance = new Animator();
 
-export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement, diagramHoveredElement ,setSceneData }: StageProps, ref) => {
+export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement , effectElements , diagramHoveredElement ,setSceneData }: StageProps, ref) => {
     const stageRef = useRef<HTMLDivElement>(null)
     const [pauseDisabled, setPauseDisabled] = useState(true)
     const [isPaused, setIsPaused] = useState(false)
+
+    const diagramHoveredElementRef = useRef(diagramHoveredElement);
+    const effectElementsRef = useRef(effectElements)
+    const sceneDataRef = useRef(sceneData)
+
+    useEffect(() => {
+        diagramHoveredElementRef.current = diagramHoveredElement;
+        effectElementsRef.current = effectElements;
+        sceneDataRef.current = sceneData;
+    }, [diagramHoveredElement, effectElements, sceneData]);
 
     let lastTimeout: ReturnType<typeof setTimeout>;
 
@@ -74,9 +86,22 @@ export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement, diagramH
         }
         const currentStage = stageRef.current;
         svgDiagram = appendDiagramHover(svgDiagram)
+        svgDiagram.addEventListener('click',handleSvgClick)
         currentStage.appendChild(svgDiagram);
         setPauseDisabled(false)
     };
+
+    const handleSvgClick = () => {
+        console.log(diagramHoveredElementRef?.current)
+        const effectElement = effectElementsRef?.current.find((item: { id: any; }) => item.id === diagramHoveredElementRef?.current);
+
+        if (!effectElement) {
+            return 
+        }
+
+        addEffectToScene(sceneDataRef.current, setSceneData, effectElement)
+        
+    }
 
     const appendDiagramHover = (svgDiagam: any) => {
         const effects = svgDiagam.getElementsByClassName("diagram-effect")
