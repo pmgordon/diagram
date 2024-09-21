@@ -7,14 +7,18 @@ import { Typography } from "@mui/material";
 export declare interface StageProps {
     sceneData: any
     setSceneData: any
+    setDiagramHoveredElement: any
+    diagramHoveredElement: any
 }
 
 const myModuleInstance = new Animator();
 
-export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) => {
+export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement, diagramHoveredElement ,setSceneData }: StageProps, ref) => {
     const stageRef = useRef<HTMLDivElement>(null)
     const [pauseDisabled, setPauseDisabled] = useState(true)
     const [isPaused, setIsPaused] = useState(false)
+
+    let lastTimeout: ReturnType<typeof setTimeout>;
 
     useEffect(() => {
         myModuleInstance.playScene(sceneData, stageRef.current?.getElementsByTagName("svg")[0]);
@@ -69,9 +73,25 @@ export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) =
             return;
         }
         const currentStage = stageRef.current;
+        svgDiagram = appendDiagramHover(svgDiagram)
         currentStage.appendChild(svgDiagram);
         setPauseDisabled(false)
     };
+
+    const appendDiagramHover = (svgDiagam: any) => {
+        const effects = svgDiagam.getElementsByClassName("diagram-effect")
+
+        for( const effect of effects){
+            effect.addEventListener('mouseover', () => {
+                setDiagramHoveredElement(effect.id)
+                clearTimeout(lastTimeout)
+                lastTimeout = setTimeout(() => {
+                        setDiagramHoveredElement("")
+                },1500)
+              });
+        }
+        return svgDiagam
+    }
 
     const handleEffectHover = (elementId: string) => {
         myModuleInstance.hoverElement(elementId, stageRef.current?.getElementsByTagName("svg")[0]);
@@ -165,8 +185,6 @@ export const Stage = forwardRef(({ sceneData, setSceneData }: StageProps, ref) =
         document.body.appendChild(element); // Required for this to work in FireFox
         element.click();
     }
-
-
 
     useImperativeHandle(ref, () => ({
         loadSvg: (svgDiagram: Element) => {

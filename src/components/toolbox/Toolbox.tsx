@@ -22,11 +22,22 @@ export declare interface ToolboxProps {
     effectElements : any
     setEffectElements: any
     svgUploadDisabled: any
-    setSvgUploadDisabled: any
+    setSvgUploadDisabled: any,
+    diagramHoveredElement: any
 }
 
 
-function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData, tabValue, setTabValue, effectElements, setEffectElements, svgUploadDisabled, setSvgUploadDisabled  }: ToolboxProps) {
+function Toolbox({ setSvgDiagram, 
+                   diagramHoveredElement,
+                   setHoveredElement, 
+                   setSceneData, 
+                   sceneData, 
+                   tabValue, 
+                   setTabValue, 
+                   effectElements, 
+                   setEffectElements, 
+                   svgUploadDisabled, 
+                   setSvgUploadDisabled  }: ToolboxProps) {
     
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         setTabValue(newValue);
@@ -64,7 +75,7 @@ function Toolbox({ setSvgDiagram, setHoveredElement, setSceneData, sceneData, ta
                                 </Grid>
                                 <Grid size={{ xs: 6, md: 12 }}>
                                     Paths
-                                    <SelectionTable effectElements={effectElements} setHoveredElement={setHoveredElement} handleEffectClicked={sceneRef.current?.handleEffectClicked} />
+                                    <SelectionTable effectElements={effectElements} diagramHoveredElement={diagramHoveredElement} setHoveredElement={setHoveredElement} handleEffectClicked={sceneRef.current?.handleEffectClicked} />
                                 </Grid>
                                 <Grid size={{ xs: 6, md: 12 }}>
                                     <SceneTable ref={sceneRef} sceneData={sceneData} setSceneData={setSceneData}  setHoveredElement={setHoveredElement} />
