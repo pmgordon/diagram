@@ -29,6 +29,7 @@ function App() {
   const [toolboxOpen, setToolboxOpen] = useState(true)
   const [tabValue, setTabValue] = useState('1');
   const [effectElements, setEffectElements] = useState([])
+  const [diagramHoveredElement, setDiagramHoveredElement] = useState("")
 
   const handleCloseToolbox = () => {
     setToolboxOpen(false)
@@ -89,6 +90,7 @@ function App() {
               setHoveredElement={setHoveredElement} 
               svgUploadDisabled={svgUploadDisabled}
               setSvgUploadDisabled={setSvgUploadDisabled}
+              diagramHoveredElement={diagramHoveredElement}
               />
             </Grid>
           }
@@ -100,7 +102,7 @@ function App() {
                 </IconButton>
               </Box>
           }
-            <Stage ref={stageRef} sceneData={sceneData} setSceneData={setSceneData} />
+            <Stage ref={stageRef} sceneData={sceneData} diagramHoveredElement={diagramHoveredElement} setDiagramHoveredElement={setDiagramHoveredElement} setSceneData={setSceneData} />
           </Grid>
         </Grid>
       </Box>

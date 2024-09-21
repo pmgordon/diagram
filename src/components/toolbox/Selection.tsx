@@ -12,14 +12,29 @@ export declare interface SelectionProps {
     effectElements: any
     handleEffectClicked: any
     setHoveredElement: any
+    diagramHoveredElement: any
 }
 
-export const SelectionTable = ({ effectElements, handleEffectClicked, setHoveredElement }: SelectionProps) => {
+export const SelectionTable = ({ effectElements, handleEffectClicked, diagramHoveredElement, setHoveredElement }: SelectionProps) => {
 
     let hoveredElement = null;
 
     const handleClicked = (effectElement: any) => {
         handleEffectClicked(effectElement)
+    }
+
+    const getChipColor = ( id: string ) => {
+        if (id === diagramHoveredElement) {
+            return "primary"
+        }
+        return "default"
+    }
+
+    const getChipVariant = ( id: string ) => {
+        if (id === diagramHoveredElement) {
+            return "filled"
+        }
+        return "outlined"
     }
  
     return (
@@ -33,7 +48,8 @@ export const SelectionTable = ({ effectElements, handleEffectClicked, setHovered
             onMouseOut={() => {setHoveredElement("")}}
             onDelete={() => {handleClicked(effectElement)}}
             deleteIcon={<AddIcon />}
-            variant="outlined"
+            variant={getChipVariant(effectElement.id)}
+            color={getChipColor(effectElement.id)}
             />
         ))}
         </div>
