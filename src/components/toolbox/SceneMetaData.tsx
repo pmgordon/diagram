@@ -58,7 +58,7 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
     const addScene = () => {
         const newScene = {
             "sceneName": `Scene ${sceneData.scenes.length + 1}`,
-            "type": "chain",
+            "type": "view",
             "actions": []
         }
         const newState = Object.assign({}, sceneData);
@@ -107,8 +107,8 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
                             onChange={handleChangeSceneType}
                             label="Type"
                         >
-                            <MenuItem value='chain'>Chain</MenuItem>
                             <MenuItem value='view'>View</MenuItem>
+                            <MenuItem value='chain'>Chain</MenuItem>
                         </Select>
                     </FormControl>
                 </Grid>

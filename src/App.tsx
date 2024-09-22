@@ -17,7 +17,7 @@ function App() {
     "scenes": [
       {
         "sceneName": "Scene 1",
-        "type": "chain",
+        "type": "view",
         "actions": []
       }
     ]
