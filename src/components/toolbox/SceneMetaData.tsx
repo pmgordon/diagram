@@ -68,7 +68,7 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
     }
 
     const copyScene = () => {
-        const sceneActions = Object.assign([], sceneData.scenes[sceneData.currentSceneIdx].actions);
+        const sceneActions = sceneData.scenes[sceneData.currentSceneIdx].actions.map((action: any) => ({ ...action }));
         const newScene = {
             "type":  sceneData.scenes[sceneData.currentSceneIdx].type,
             "sceneName": `Scene ${sceneData.scenes.length + 1}`,
