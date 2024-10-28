@@ -5,15 +5,30 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 
 
-import { Box, Button, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Button, Chip, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 
 export declare interface SceneMetaDataProps {
     setSceneData: any
-    sceneData: any
+    sceneData: any,
+    diagramHoveredElement: any
 }
 
-export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) => {
+export const SceneMetaData = ({ setSceneData, sceneData, diagramHoveredElement }: SceneMetaDataProps) => {
+
+    const getChipColor = () => {
+        if (diagramHoveredElement !== "") {
+            return "primary"
+        }
+        return "default"
+    }
+
+    const getChipVariant = () => {
+        if (diagramHoveredElement !== "") {
+            return "filled"
+        }
+        return "outlined"
+    }
 
     const handleChangeSceneType = (event: any) => {
         const newState = Object.assign({}, sceneData);
@@ -70,11 +85,11 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
     const copyScene = () => {
         const sceneActions = sceneData.scenes[sceneData.currentSceneIdx].actions.map((action: any) => ({ ...action }));
         const newScene = {
-            "type":  sceneData.scenes[sceneData.currentSceneIdx].type,
+            "type": sceneData.scenes[sceneData.currentSceneIdx].type,
             "sceneName": `Scene ${sceneData.scenes.length + 1}`,
-            "actions" : sceneActions
+            "actions": sceneActions
         }
-        
+
 
         const newState = Object.assign({}, sceneData);
         newState.scenes.push(newScene)
@@ -124,9 +139,13 @@ export const SceneMetaData = ({ setSceneData, sceneData }: SceneMetaDataProps) =
                     <IconButton aria-label="delete" color="primary" onClick={addScene}>
                         <AddCircleOutlineIcon />
                     </IconButton>
+                    <Chip
+                        style={{width: "17px", height: "17px"}}
+                        color={getChipColor()}
+                        variant={getChipVariant()}
+                    />
                 </Grid>
             </Grid>
-
         </Box>
     )
 }
