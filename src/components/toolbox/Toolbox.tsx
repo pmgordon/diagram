@@ -7,7 +7,6 @@ import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 
 import { SceneTable } from "./Scene";
-import { SelectionTable } from "./Selection";
 import { Tab } from "@mui/material";
 import { SceneMetaData } from "./SceneMetaData";
 import { ReOrder } from "./ReOrder";
@@ -19,7 +18,7 @@ export declare interface ToolboxProps {
     sceneData: any
     tabValue: any
     setTabValue: any
-    effectElements : any
+    effectElements: any
     setEffectElements: any
     svgUploadDisabled: any
     setSvgUploadDisabled: any,
@@ -27,21 +26,28 @@ export declare interface ToolboxProps {
 }
 
 
-function Toolbox({ setSvgDiagram, 
-                   diagramHoveredElement,
-                   setHoveredElement, 
-                   setSceneData, 
-                   sceneData, 
-                   tabValue, 
-                   setTabValue, 
-                   effectElements, 
-                   setEffectElements, 
-                   svgUploadDisabled, 
-                   setSvgUploadDisabled  }: ToolboxProps) {
-    
+function Toolbox({ setSvgDiagram,
+    diagramHoveredElement,
+    setHoveredElement,
+    setSceneData,
+    sceneData,
+    tabValue,
+    setTabValue,
+    effectElements,
+    setEffectElements,
+    svgUploadDisabled,
+    setSvgUploadDisabled }: ToolboxProps) {
+
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
         setTabValue(newValue);
     };
+
+    const shouldShowEffectGrid = () => {
+        if (sceneData.scenes[sceneData.currentSceneIdx].actions.length > 0) {
+            return true;
+        }
+        return false;
+    }
 
 
 
@@ -59,32 +65,31 @@ function Toolbox({ setSvgDiagram,
                         </TabList>
                     </Box>
                     <TabPanel value="1">
-                        <UploadButton sceneData={sceneData} 
-                                      setSceneData={setSceneData} 
-                                      svgUploadDisabled={svgUploadDisabled}
-                                      setSvgUploadDisabled={setSvgUploadDisabled} 
-                                      setSvgDiagram={setSvgDiagram} 
-                                      setEffectElements={setEffectElements} 
-                                      setTabValue={setTabValue} />
+                        <UploadButton sceneData={sceneData}
+                            setSceneData={setSceneData}
+                            svgUploadDisabled={svgUploadDisabled}
+                            setSvgUploadDisabled={setSvgUploadDisabled}
+                            setSvgDiagram={setSvgDiagram}
+                            setEffectElements={setEffectElements}
+                            setTabValue={setTabValue} />
                     </TabPanel>
                     <TabPanel value="2">
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={2}>
                                 <Grid size={{ xs: 6, md: 12 }}>
-                                    <SceneMetaData sceneData={sceneData} setSceneData={setSceneData} />
+                                    <SceneMetaData sceneData={sceneData} setSceneData={setSceneData} diagramHoveredElement={diagramHoveredElement} />
                                 </Grid>
-                                <Grid size={{ xs: 6, md: 12 }}>
-                                    Paths
-                                    <SelectionTable effectElements={effectElements} diagramHoveredElement={diagramHoveredElement} setHoveredElement={setHoveredElement} handleEffectClicked={sceneRef.current?.handleEffectClicked} />
-                                </Grid>
-                                <Grid size={{ xs: 6, md: 12 }}>
-                                    <SceneTable ref={sceneRef} sceneData={sceneData} setSceneData={setSceneData}  setHoveredElement={setHoveredElement} />
-                                </Grid>
+                                {shouldShowEffectGrid() &&
+                                    <Grid size={{ xs: 6, md: 12 }}>
+                                        Effects
+                                        <SceneTable ref={sceneRef} sceneData={sceneData} setSceneData={setSceneData} setHoveredElement={setHoveredElement} />
+                                    </Grid>
+                                }
                             </Grid>
                         </Box>
                     </TabPanel>
                     <TabPanel value="3">
-                       <ReOrder sceneData={sceneData} setSceneData={setSceneData} />
+                        <ReOrder sceneData={sceneData} setSceneData={setSceneData} />
                     </TabPanel>
                 </TabContext>
             </Box>

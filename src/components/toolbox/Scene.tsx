@@ -8,10 +8,11 @@ import Paper from '@mui/material/Paper';
 import ClearIcon from '@mui/icons-material/Clear';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { FormControl, IconButton, MenuItem, Select, TextField } from '@mui/material';
+import { IconButton, Stack } from '@mui/material';
 import { forwardRef, useImperativeHandle, useState } from 'react';
 import ColorPicker from './ColorPicker';
 import { addEffectToScene } from '../../services/util';
+import { East, West } from '@mui/icons-material';
 
 
 export declare interface SceneProps {
@@ -42,12 +43,17 @@ export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneDa
 
 
     const handleEffectClicked = (effectElement: any) => {
-        addEffectToScene(sceneData, setSceneData , effectElement)
+        addEffectToScene(sceneData, setSceneData, effectElement)
     }
 
-    const handleDirectionChange = (event: any, idx: number) => {
+    const handleDirectionChange = (idx: number) => {
         const newState = Object.assign({}, sceneData);
-        newState.scenes[sceneData.currentSceneIdx].actions[idx].direction = event.target.value;
+        const currentDirection = newState.scenes[sceneData.currentSceneIdx].actions[idx].direction;
+        if (currentDirection == "right") {
+            newState.scenes[sceneData.currentSceneIdx].actions[idx].direction = "left";
+        } else {
+            newState.scenes[sceneData.currentSceneIdx].actions[idx].direction = "right";
+        }
         setSceneData(newState)
     }
 
@@ -66,10 +72,10 @@ export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneDa
     }
 
     const moveDisabled = (idx: number, direction: number) => {
-        if (idx === 0 && direction === -1 ) {
+        if (idx === 0 && direction === -1) {
             return true
         }
-        if (idx === (sceneData.scenes[sceneData.currentSceneIdx].actions.length - 1) && direction === 1){
+        if (idx === (sceneData.scenes[sceneData.currentSceneIdx].actions.length - 1) && direction === 1) {
             return true
         }
         return false
@@ -87,17 +93,17 @@ export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneDa
         let newArray = Object.assign([], sceneData.scenes[sceneData.currentSceneIdx].actions);
 
         if (direction === -1) {
-            newArray = array_move(newArray, idx, idx-1)
+            newArray = array_move(newArray, idx, idx - 1)
         }
 
         if (direction === 1) {
-            newArray = array_move(newArray, idx, idx+1)
+            newArray = array_move(newArray, idx, idx + 1)
         }
-        
+
         newState.scenes[newState.currentSceneIdx].actions = newArray
         setSceneData(newState)
     }
-    
+
 
     useImperativeHandle(ref, () => ({
         handleEffectClicked: (effectElement: any) => {
@@ -112,9 +118,9 @@ export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneDa
                     <TableRow>
                         <TableCell></TableCell>
                         <TableCell>Path</TableCell>
-                        <TableCell align="right">Direction</TableCell>
-                        <TableCell align="right">Color</TableCell>
-                        <TableCell align="right">Button</TableCell>
+                        <TableCell align="center">Direction</TableCell>
+                        <TableCell align="center">Color</TableCell>
+                        <TableCell align="center">Delete</TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
@@ -123,36 +129,37 @@ export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneDa
                             key={idx}
                             sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
                         >
-                                <TableCell component="th" scope="row">
+                            <TableCell component="th" scope="row">
+                                <Stack spacing={1}>
                                     <IconButton onClick={() => { handleMove(idx, -1) }} disabled={moveDisabled(idx, -1)} aria-label="fingerprint" color="primary">
                                         <KeyboardArrowUpIcon />
                                     </IconButton>
-                                    <IconButton onClick={() => { handleMove(idx, 1) }} disabled={moveDisabled(idx, 1)} aria-label="fingerprint" color="primary">
+                                    <IconButton style={{ marginTop: "-15px" }} onClick={() => { handleMove(idx, 1) }} disabled={moveDisabled(idx, 1)} aria-label="fingerprint" color="primary">
                                         <KeyboardArrowDownIcon />
                                     </IconButton>
-                                </TableCell>
-                            <TableCell 
-                            onMouseOver={() => { setHoveredElement(effect.pth) }}
-                            onMouseOut={() => {setHoveredElement("")}}
-                            component="th" scope="row">
+                                </Stack>
+                            </TableCell>
+                            <TableCell
+                                onMouseOver={() => { setHoveredElement(effect.pth) }}
+                                onMouseOut={() => { setHoveredElement("") }}
+                                component="th" scope="row">
                                 {effect.shortName}
                             </TableCell>
-                            <TableCell align="right">
-                                <FormControl variant="standard" sx={{ m: 1, minWidth: 65 }}>
-                                    <Select
-                                        labelId="demo-simple-select-standard-label"
-                                        id="demo-simple-select-standard"
-                                        value={effect.direction}
-                                        onChange={(e) => handleDirectionChange(e, idx)}
-                                        label="Age"
-                                    >
-                                        <MenuItem value="left">Left</MenuItem>
-                                        <MenuItem value="right">Right</MenuItem>
-                                    </Select>
-                                </FormControl>
+                            <TableCell align="center">
+
+                                {effect.direction == "right" &&
+                                    <IconButton onClick={() => { handleDirectionChange(idx) }} aria-label="fingerprint" color="primary">
+                                        <East />
+                                    </IconButton>
+                                }
+                                {effect.direction == "left" &&
+                                    <IconButton onClick={() => { handleDirectionChange(idx) }} aria-label="fingerprint" color="primary">
+                                        <West />
+                                    </IconButton>
+                                }
                             </TableCell>
-                            <TableCell align="right"><ColorPicker handleChange={handleColorChange} color={effect.color} idx={idx} /></TableCell>
-                            <TableCell align="right">
+                            <TableCell align="center"><ColorPicker handleChange={handleColorChange} color={effect.color} idx={idx} /></TableCell>
+                            <TableCell align="center">
                                 <IconButton onClick={() => { handleDelete(idx) }} aria-label="fingerprint" color="primary">
                                     <ClearIcon />
                                 </IconButton>
