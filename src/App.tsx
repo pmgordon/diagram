@@ -11,23 +11,11 @@ import { IconButton } from '@mui/material';
 
 
 function App() {
-
-  const initScene = {
-    "currentSceneIdx": 0,
-    "scenes": [
-      {
-        "sceneName": "Scene 1",
-        "type": "view",
-        "actions": []
-      }
-    ]
-  }
-  const [sceneData, setSceneData] = useState(initScene)
   const [svgDiagram, setSvgDiagram] = useState<Element | undefined>(undefined);
   const [hoveredElement, setHoveredElement] = useState("");
   const [svgUploadDisabled, setSvgUploadDisabled] = useState(false)
   const [toolboxOpen, setToolboxOpen] = useState(true)
-  const [tabValue, setTabValue] = useState('1');
+  const [tabValue, setTabValue] = useState('2');
   const [effectElements, setEffectElements] = useState([])
   const [diagramHoveredElement, setDiagramHoveredElement] = useState("")
 
@@ -82,9 +70,7 @@ function App() {
               setEffectElements={setEffectElements} 
               tabValue={tabValue} 
               setTabValue={setTabValue} 
-              setSvgDiagram={setSvgDiagram} 
-              sceneData={sceneData} 
-              setSceneData={setSceneData} 
+              setSvgDiagram={setSvgDiagram}  
               setHoveredElement={setHoveredElement} 
               svgUploadDisabled={svgUploadDisabled}
               setSvgUploadDisabled={setSvgUploadDisabled}
@@ -101,10 +87,8 @@ function App() {
               </Box>
           }
             <Stage ref={stageRef} 
-                   sceneData={sceneData} 
                    diagramHoveredElement={diagramHoveredElement} 
                    setDiagramHoveredElement={setDiagramHoveredElement} 
-                   setSceneData={setSceneData} 
                    effectElements={effectElements}/>
           </Grid>
         </Grid>

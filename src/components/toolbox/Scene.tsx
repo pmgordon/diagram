@@ -9,66 +9,31 @@ import ClearIcon from '@mui/icons-material/Clear';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { IconButton, Stack } from '@mui/material';
-import { forwardRef, useImperativeHandle, useState } from 'react';
+import { forwardRef } from 'react';
+import { useSelector, useDispatch } from 'react-redux'
+import type { RootState } from '../../store'
 import ColorPicker from './ColorPicker';
-import { addEffectToScene } from '../../services/util';
 import { East, West } from '@mui/icons-material';
+import { changeEffectColor, changeEffectDirection, changeEffectOrder, deleteEffect } from '../../appSlice';
 
 
 export declare interface SceneProps {
-    setSceneData: any
-    sceneData: any
     setHoveredElement: any
 }
 
-type ActionDataType = {
-    pth: string;
-    direction: string
-    color: string
-};
-
-function array_move(arr: any, old_index: number, new_index: number) {
-    if (new_index >= arr.length) {
-        var k = new_index - arr.length + 1;
-        while (k--) {
-            arr.push(undefined);
-        }
-    }
-    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-    return arr;
-};
-
-
-export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneData }: SceneProps, ref) => {
-
-
-    const handleEffectClicked = (effectElement: any) => {
-        addEffectToScene(sceneData, setSceneData, effectElement)
-    }
-
+export const SceneTable = forwardRef(({ setHoveredElement }: SceneProps, ref) => {
+    const dispatch = useDispatch()
+    const sceneData = useSelector((state: RootState) => state.app)
     const handleDirectionChange = (idx: number) => {
-        const newState = Object.assign({}, sceneData);
-        const currentDirection = newState.scenes[sceneData.currentSceneIdx].actions[idx].direction;
-        if (currentDirection == "right") {
-            newState.scenes[sceneData.currentSceneIdx].actions[idx].direction = "left";
-        } else {
-            newState.scenes[sceneData.currentSceneIdx].actions[idx].direction = "right";
-        }
-        setSceneData(newState)
+        dispatch(changeEffectDirection(idx))
     }
 
     const handleDelete = (idx: number) => {
-        const newState = Object.assign({}, sceneData);
-        newState.scenes[sceneData.currentSceneIdx].actions.splice(idx, 1);
-        setSceneData(newState)
+        dispatch(deleteEffect(idx))
     }
 
     const handleColorChange = (color: string, idx: number) => {
-        const newState = Object.assign({}, sceneData);
-        newState.scenes[sceneData.currentSceneIdx].actions[idx].color = color;
-        console.log(newState)
-        setSceneData(newState)
-
+        dispatch(changeEffectColor({idx, color}))
     }
 
     const moveDisabled = (idx: number, direction: number) => {
@@ -89,27 +54,8 @@ export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneDa
         if (idx === (sceneData.scenes[sceneData.currentSceneIdx].actions.length - 1) && direction === 1) {
             return;
         }
-        const newState = Object.assign({}, sceneData);
-        let newArray = Object.assign([], sceneData.scenes[sceneData.currentSceneIdx].actions);
-
-        if (direction === -1) {
-            newArray = array_move(newArray, idx, idx - 1)
-        }
-
-        if (direction === 1) {
-            newArray = array_move(newArray, idx, idx + 1)
-        }
-
-        newState.scenes[newState.currentSceneIdx].actions = newArray
-        setSceneData(newState)
+        dispatch(changeEffectOrder({idx, direction}))
     }
-
-
-    useImperativeHandle(ref, () => ({
-        handleEffectClicked: (effectElement: any) => {
-            handleEffectClicked(effectElement)
-        }
-    }));
 
     return (
         <TableContainer component={Paper}>
@@ -147,12 +93,12 @@ export const SceneTable = forwardRef(({ setSceneData, setHoveredElement, sceneDa
                             </TableCell>
                             <TableCell align="center">
 
-                                {effect.direction == "right" &&
+                                {effect.direction === "right" &&
                                     <IconButton onClick={() => { handleDirectionChange(idx) }} aria-label="fingerprint" color="primary">
                                         <East />
                                     </IconButton>
                                 }
-                                {effect.direction == "left" &&
+                                {effect.direction === "left" &&
                                     <IconButton onClick={() => { handleDirectionChange(idx) }} aria-label="fingerprint" color="primary">
                                         <West />
                                     </IconButton>
