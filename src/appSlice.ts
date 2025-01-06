@@ -7,13 +7,22 @@ export interface SceneType {
     "actions": any[]
 }
 
+export interface EffectElementType {
+    "id" : string | null,
+    "shortName" : string | null
+}
+
 export interface SceneState {
-    currentSceneIdx: number
+    svgDiagram: string | undefined;
+    effectElements: EffectElementType[]
+    currentSceneIdx: number;
     scenes: SceneType[]
 }
 
 const initialState: SceneState = {
     currentSceneIdx: 0,
+    svgDiagram: undefined,
+    effectElements: [],
     "scenes": [
         {
             "sceneName": "Scene 1",
@@ -76,6 +85,12 @@ export const appSlice = createSlice({
     name: 'app',
     initialState,
     reducers: {
+        setEffectElements: (state, action: PayloadAction<EffectElementType[]>) => {
+            state.effectElements = action.payload
+        },
+        setSvgDiagram: (state, action: PayloadAction<string>) => {
+            state.svgDiagram = action.payload
+        },
         migrateState: (state, action: PayloadAction<SceneState>) => {
             state.currentSceneIdx = action.payload.currentSceneIdx
             state.scenes = action.payload.scenes
@@ -173,6 +188,8 @@ function array_move(arr: any, old_index: number, new_index: number) {
 
 // Action creators are generated for each case reducer function
 export const { 
+    setSvgDiagram,
+    setEffectElements,
     migrateState,
     addNewScene, 
     addSceneCopy, 

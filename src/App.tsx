@@ -7,17 +7,30 @@ import { Stage } from './components/stage/Stage';
 import KeyboardDoubleArrowLeftIcon from '@mui/icons-material/KeyboardDoubleArrowLeft';
 import MenuIcon from '@mui/icons-material/Menu';
 import { IconButton } from '@mui/material';
+import { useSelector } from 'react-redux'
+import type { RootState } from './store'
 
-
+const htmlToNodes = (html: string) => {
+  const template = document.createElement('template');
+  template.innerHTML = html;
+  let svgElement: Element | null = null;
+  
+  const elmArray = Array.from(template.content.childNodes);
+  for (const elm of elmArray) {
+      if (elm instanceof Element && elm.tagName.toLowerCase() === "svg") {
+          svgElement = elm;
+          break;
+      }
+  }
+  return svgElement
+}
 
 function App() {
-  const [svgDiagram, setSvgDiagram] = useState<Element | undefined>(undefined);
   const [hoveredElement, setHoveredElement] = useState("");
-  const [svgUploadDisabled, setSvgUploadDisabled] = useState(false)
   const [toolboxOpen, setToolboxOpen] = useState(true)
-  const [tabValue, setTabValue] = useState('2');
-  const [effectElements, setEffectElements] = useState([])
   const [diagramHoveredElement, setDiagramHoveredElement] = useState("")
+
+  const svgDiagram = useSelector((state: RootState) => state.app.svgDiagram)
 
   const handleCloseToolbox = () => {
     setToolboxOpen(false)
@@ -44,7 +57,14 @@ function App() {
     if (svgDiagram === undefined) {
       return;
     }
-    stageRef.current?.loadSvg(svgDiagram);
+    // TODO: Add this back
+    const htmlNodes = htmlToNodes(svgDiagram)
+
+    if (htmlNodes == null) {
+      return;
+    }
+
+    stageRef.current?.loadSvg(htmlNodes);
 
   }, [svgDiagram]);
 
@@ -66,14 +86,7 @@ function App() {
                 </IconButton>
               </Box>
               <Toolbox 
-              effectElements={effectElements} 
-              setEffectElements={setEffectElements} 
-              tabValue={tabValue} 
-              setTabValue={setTabValue} 
-              setSvgDiagram={setSvgDiagram}  
               setHoveredElement={setHoveredElement} 
-              svgUploadDisabled={svgUploadDisabled}
-              setSvgUploadDisabled={setSvgUploadDisabled}
               diagramHoveredElement={diagramHoveredElement}
               />
             </Grid>
@@ -88,8 +101,7 @@ function App() {
           }
             <Stage ref={stageRef} 
                    diagramHoveredElement={diagramHoveredElement} 
-                   setDiagramHoveredElement={setDiagramHoveredElement} 
-                   effectElements={effectElements}/>
+                   setDiagramHoveredElement={setDiagramHoveredElement} />
           </Grid>
         </Grid>
       </Box>

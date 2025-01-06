@@ -10,12 +10,11 @@ import { changeScene, addEffectToScene as reduxAddEffectToScene } from '../../ap
 export declare interface StageProps {
     setDiagramHoveredElement: any
     diagramHoveredElement: any
-    effectElements: any,
 }
 
 const myModuleInstance = new Animator();
 
-export const Stage = forwardRef(({ setDiagramHoveredElement , effectElements , diagramHoveredElement }: StageProps, ref) => {
+export const Stage = forwardRef(({ setDiagramHoveredElement, diagramHoveredElement }: StageProps, ref) => {
     const stageRef = useRef<HTMLDivElement>(null)
     const [pauseDisabled, setPauseDisabled] = useState(true)
     const [isPaused, setIsPaused] = useState(false)
@@ -23,6 +22,7 @@ export const Stage = forwardRef(({ setDiagramHoveredElement , effectElements , d
 
 
     const sceneData = useSelector((state: RootState) => state.app)
+    const effectElements = useSelector((state: RootState) => state.app.effectElements)
 
     const diagramHoveredElementRef = useRef(diagramHoveredElement);
     const effectElementsRef = useRef(effectElements)
@@ -266,8 +266,6 @@ export const Stage = forwardRef(({ setDiagramHoveredElement , effectElements , d
                     </Typography>
                 </Grid>
             </Grid>
-            <div>{JSON.stringify(sceneData)}</div>
-
             <div ref={stageRef}></div>
         </div>
 

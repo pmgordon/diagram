@@ -2,18 +2,12 @@
 import { ChangeEvent } from "react";
 import Button from '@mui/material/Button';
 import UploadFileIcon from "@mui/icons-material/UploadFile";
-import { useDispatch } from 'react-redux'
-import { migrateState } from "../../appSlice";
+import { useSelector, useDispatch } from 'react-redux'
+import type { RootState } from '../../store'
+import { migrateState, setSvgDiagram, setEffectElements, EffectElementType } from "../../appSlice";
+import { updateTabValue, setSvgUploadDisabled } from "./toolBoxSlice";
 
-export declare interface UploadButtonProps {
-    setSvgDiagram: React.Dispatch<React.SetStateAction<Element | undefined>>
-    setEffectElements: React.Dispatch<React.SetStateAction<any | undefined>>
-    setTabValue: React.Dispatch<React.SetStateAction<any | undefined>>
-    svgUploadDisabled: boolean
-    setSvgUploadDisabled: any
-}
-
-const getEffectElements = (svg: Element) => {
+const getEffectElements = (svg: Element): EffectElementType[] => {
     const elements = svg.querySelectorAll('[diagram-effect-id]');
     const propertyValues = Array.from(elements).map(element => ({
         id: element.getAttribute('diagram-effect-id'),
@@ -101,11 +95,7 @@ const reformatSVG = (svg: NodeListOf<ChildNode>, fileType: string): Element => {
     return svgElement;
 }
 
-const UploadButton = ({ setSvgDiagram, 
-                        setEffectElements, 
-                        setTabValue, 
-                        setSvgUploadDisabled, 
-                        svgUploadDisabled }: UploadButtonProps) => {
+const UploadButton = () => {
     const htmlToNodes = (html: string) => {
         const template = document.createElement('template');
         template.innerHTML = html;
@@ -113,6 +103,7 @@ const UploadButton = ({ setSvgDiagram,
     }
 
     const dispatch = useDispatch()
+    const svgUploadDisabled= useSelector((state: RootState) => state.toolbox.svgUploadDisabled)
 
     const handleSetScene = (htmlText: string) => {
         const matches = htmlText.match(/const sceneData = (.*?)\n/)
@@ -148,15 +139,15 @@ const UploadButton = ({ setSvgDiagram,
             const formattedSVG = reformatSVG(nodes, fileType)
             const effectElements = getEffectElements(formattedSVG);
 
-            setSvgDiagram(formattedSVG);
-            setEffectElements(effectElements);
+            dispatch(setSvgDiagram(formattedSVG.outerHTML));
+            dispatch(setEffectElements(effectElements))
 
             if (fileType === 'html'){
                 handleSetScene(evt.target.result)
             }
 
-            setSvgUploadDisabled(true)
-            setTabValue("3")
+            dispatch(setSvgUploadDisabled(true))
+            dispatch(updateTabValue("3"))
 
 
         };

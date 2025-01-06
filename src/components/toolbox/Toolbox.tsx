@@ -6,40 +6,30 @@ import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
 import type { RootState } from '../../store'
 
 import { SceneTable } from "./Scene";
 import { Tab } from "@mui/material";
 import { SceneMetaData } from "./SceneMetaData";
 import { ReOrder } from "./ReOrder";
+import { updateTabValue } from '../toolbox/toolBoxSlice';
 
 export declare interface ToolboxProps {
-    setSvgDiagram: React.Dispatch<React.SetStateAction<Element | undefined>>,
     setHoveredElement: React.Dispatch<React.SetStateAction<string>>,
-    tabValue: any
-    setTabValue: any
-    effectElements: any
-    setEffectElements: any
-    svgUploadDisabled: any
-    setSvgUploadDisabled: any,
     diagramHoveredElement: any
 }
 
 
-function Toolbox({ setSvgDiagram,
+function Toolbox({
     diagramHoveredElement,
-    setHoveredElement,
-    tabValue,
-    setTabValue,
-    setEffectElements,
-    svgUploadDisabled,
-    setSvgUploadDisabled }: ToolboxProps) {
-
+    setHoveredElement}: ToolboxProps) {
+    const dispatch = useDispatch()
     const sceneData = useSelector((state: RootState) => state.app)
+    const tabValue = useSelector((state: RootState) => state.toolbox.tabValue)
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-        setTabValue(newValue);
+        dispatch(updateTabValue(newValue))
     };
 
     const shouldShowEffectGrid = () => {
@@ -61,7 +51,7 @@ function Toolbox({ setSvgDiagram,
                         <TabList onChange={handleTabChange} aria-label="lab API tabs example">
                             <Tab label="Draw" value="1" />
                             <Tab label="Upload" value="2" />
-                            <Tab label="Scenes" value="3" />
+                            <Tab label="Scenes" value="3"/>
                             <Tab label="ReOrder" value="4" />
                         </TabList>
                     </Box>
@@ -69,12 +59,7 @@ function Toolbox({ setSvgDiagram,
                         <DrawButton />
                     </TabPanel>
                     <TabPanel value="2">
-                        <UploadButton
-                            svgUploadDisabled={svgUploadDisabled}
-                            setSvgUploadDisabled={setSvgUploadDisabled}
-                            setSvgDiagram={setSvgDiagram}
-                            setEffectElements={setEffectElements}
-                            setTabValue={setTabValue} />
+                        <UploadButton />
                     </TabPanel>
                     <TabPanel value="3">
                         <Box sx={{ flexGrow: 1 }}>
