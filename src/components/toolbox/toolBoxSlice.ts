@@ -7,7 +7,7 @@ export interface ToolBoxState {
 }
 
 const initialState: ToolBoxState = {
-  tabValue: "2",
+  tabValue: "1",
   svgUploadDisabled: false
 }
 

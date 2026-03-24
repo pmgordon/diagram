@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import drawFlowDiagramReducer from './components/toolbox/DrawDiagrams/drawFlowDiagramSlice'
+import drawFlowReducer from './components/toolbox/DrawDiagrams/DataFlow/drawDataFlowSice'
 import toolBoxReducer from './components/toolbox/toolBoxSlice'
 import appReducer from './appSlice'
 
 export const store = configureStore({
   reducer: {
     drawFlowDiagram: drawFlowDiagramReducer,
+    drawFlow: drawFlowReducer,
     toolbox: toolBoxReducer,
     app: appReducer
   },

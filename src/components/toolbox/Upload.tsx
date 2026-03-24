@@ -83,8 +83,6 @@ const reformatSVG = (svg: NodeListOf<ChildNode>, fileType: string): Element => {
         }
     }
 
-
-
     if (!svgElement) {
         throw new Error('No svg element found');
     }
