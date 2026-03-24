@@ -3,22 +3,26 @@ import { Animator } from "./animator"
 import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid2';
 import { Typography } from "@mui/material";
-import { addEffectToScene } from "../../services/util";
+import type { RootState } from '../../store'
+import { useSelector, useDispatch } from 'react-redux'
+import { changeScene, addEffectToScene as reduxAddEffectToScene } from '../../appSlice'
 
 export declare interface StageProps {
-    sceneData: any
-    setSceneData: any
     setDiagramHoveredElement: any
     diagramHoveredElement: any
-    effectElements: any,
 }
 
 const myModuleInstance = new Animator();
 
-export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement , effectElements , diagramHoveredElement ,setSceneData }: StageProps, ref) => {
+export const Stage = forwardRef(({ setDiagramHoveredElement, diagramHoveredElement }: StageProps, ref) => {
     const stageRef = useRef<HTMLDivElement>(null)
     const [pauseDisabled, setPauseDisabled] = useState(true)
     const [isPaused, setIsPaused] = useState(false)
+    const dispatch = useDispatch()
+
+
+    const sceneData = useSelector((state: RootState) => state.app)
+    const effectElements = useSelector((state: RootState) => state.app.effectElements)
 
     const diagramHoveredElementRef = useRef(diagramHoveredElement);
     const effectElementsRef = useRef(effectElements)
@@ -75,9 +79,7 @@ export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement , effectE
             return;
         }
 
-        const newState = Object.assign({}, sceneData);
-        newState.currentSceneIdx = newState.currentSceneIdx + direction;
-        setSceneData(newState)
+        dispatch(changeScene(direction))
     }
 
     const loadSvg = (svgDiagram: Element) => {
@@ -91,6 +93,10 @@ export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement , effectE
         setPauseDisabled(false)
     };
 
+    const addEffectToScene = (effectElement: any) => {
+        dispatch(reduxAddEffectToScene(effectElement))
+    }
+
     const handleSvgClick = () => {
         console.log(diagramHoveredElementRef?.current)
         const effectElement = effectElementsRef?.current.find((item: { id: any; }) => item.id === diagramHoveredElementRef?.current);
@@ -99,7 +105,7 @@ export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement , effectE
             return 
         }
 
-        addEffectToScene(sceneDataRef.current, setSceneData, effectElement)
+        addEffectToScene(effectElement)
         
     }
 
@@ -108,7 +114,7 @@ export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement , effectE
 
         for( const effect of effects){
             effect.addEventListener('mouseover', () => {
-                setDiagramHoveredElement(effect.id)
+                setDiagramHoveredElement(effect.attributes['diagram-effect-id'].value)
                 clearTimeout(lastTimeout)
                 lastTimeout = setTimeout(() => {
                         setDiagramHoveredElement("")
@@ -260,10 +266,7 @@ export const Stage = forwardRef(({ sceneData, setDiagramHoveredElement , effectE
                     </Typography>
                 </Grid>
             </Grid>
-
-            <div ref={stageRef}>
-
-            </div>
+            <div ref={stageRef}></div>
         </div>
 
     )

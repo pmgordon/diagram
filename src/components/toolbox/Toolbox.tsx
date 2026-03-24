@@ -1,45 +1,35 @@
-import { useState, useRef } from "react";
+import { useRef } from "react";
 import UploadButton from "./Upload";
+import DrawButton from "./Draw";
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
+import { useSelector, useDispatch } from 'react-redux'
+import type { RootState } from '../../store'
 
 import { SceneTable } from "./Scene";
 import { Tab } from "@mui/material";
 import { SceneMetaData } from "./SceneMetaData";
 import { ReOrder } from "./ReOrder";
+import { updateTabValue } from '../toolbox/toolBoxSlice';
 
 export declare interface ToolboxProps {
-    setSvgDiagram: React.Dispatch<React.SetStateAction<Element | undefined>>,
     setHoveredElement: React.Dispatch<React.SetStateAction<string>>,
-    setSceneData: any
-    sceneData: any
-    tabValue: any
-    setTabValue: any
-    effectElements: any
-    setEffectElements: any
-    svgUploadDisabled: any
-    setSvgUploadDisabled: any,
     diagramHoveredElement: any
 }
 
 
-function Toolbox({ setSvgDiagram,
+function Toolbox({
     diagramHoveredElement,
-    setHoveredElement,
-    setSceneData,
-    sceneData,
-    tabValue,
-    setTabValue,
-    effectElements,
-    setEffectElements,
-    svgUploadDisabled,
-    setSvgUploadDisabled }: ToolboxProps) {
+    setHoveredElement}: ToolboxProps) {
+    const dispatch = useDispatch()
+    const sceneData = useSelector((state: RootState) => state.app)
+    const tabValue = useSelector((state: RootState) => state.toolbox.tabValue)
 
     const handleTabChange = (event: React.SyntheticEvent, newValue: string) => {
-        setTabValue(newValue);
+        dispatch(updateTabValue(newValue))
     };
 
     const shouldShowEffectGrid = () => {
@@ -59,37 +49,35 @@ function Toolbox({ setSvgDiagram,
                 <TabContext value={tabValue}>
                     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
                         <TabList onChange={handleTabChange} aria-label="lab API tabs example">
-                            <Tab label="Upload" value="1" />
-                            <Tab label="Scenes" value="2" />
-                            <Tab label="ReOrder" value="3" />
+                            <Tab label="Draw" value="1" />
+                            <Tab label="Upload" value="2" />
+                            <Tab label="Scenes" value="3"/>
+                            <Tab label="ReOrder" value="4" />
                         </TabList>
                     </Box>
                     <TabPanel value="1">
-                        <UploadButton sceneData={sceneData}
-                            setSceneData={setSceneData}
-                            svgUploadDisabled={svgUploadDisabled}
-                            setSvgUploadDisabled={setSvgUploadDisabled}
-                            setSvgDiagram={setSvgDiagram}
-                            setEffectElements={setEffectElements}
-                            setTabValue={setTabValue} />
+                        <DrawButton />
                     </TabPanel>
                     <TabPanel value="2">
+                        <UploadButton />
+                    </TabPanel>
+                    <TabPanel value="3">
                         <Box sx={{ flexGrow: 1 }}>
                             <Grid container spacing={2}>
                                 <Grid size={{ xs: 6, md: 12 }}>
-                                    <SceneMetaData sceneData={sceneData} setSceneData={setSceneData} diagramHoveredElement={diagramHoveredElement} />
+                                    <SceneMetaData diagramHoveredElement={diagramHoveredElement} />
                                 </Grid>
                                 {shouldShowEffectGrid() &&
                                     <Grid size={{ xs: 6, md: 12 }}>
                                         Effects
-                                        <SceneTable ref={sceneRef} sceneData={sceneData} setSceneData={setSceneData} setHoveredElement={setHoveredElement} />
+                                        <SceneTable ref={sceneRef} setHoveredElement={setHoveredElement} />
                                     </Grid>
                                 }
                             </Grid>
                         </Box>
                     </TabPanel>
-                    <TabPanel value="3">
-                        <ReOrder sceneData={sceneData} setSceneData={setSceneData} />
+                    <TabPanel value="4">
+                        <ReOrder />
                     </TabPanel>
                 </TabContext>
             </Box>

@@ -1,21 +1,21 @@
-
+import { useSelector, useDispatch } from 'react-redux'
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-
-
-import { Box, Button, Chip, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { Box, Chip, FormControl, IconButton, InputLabel, MenuItem, Select, TextField } from "@mui/material";
 import Grid from '@mui/material/Grid2';
 
+import { addNewScene, addSceneCopy, changeScene, changeSceneName, changeSceneType } from '../../appSlice'
+import type { RootState } from '../../store'
+
 export declare interface SceneMetaDataProps {
-    setSceneData: any
-    sceneData: any,
     diagramHoveredElement: any
 }
 
-export const SceneMetaData = ({ setSceneData, sceneData, diagramHoveredElement }: SceneMetaDataProps) => {
-
+export const SceneMetaData = ({ diagramHoveredElement }: SceneMetaDataProps) => {
+    const dispatch = useDispatch()
+    const sceneData = useSelector((state: RootState) => state.app)
     const getChipColor = () => {
         if (diagramHoveredElement !== "") {
             return "primary"
@@ -31,15 +31,11 @@ export const SceneMetaData = ({ setSceneData, sceneData, diagramHoveredElement }
     }
 
     const handleChangeSceneType = (event: any) => {
-        const newState = Object.assign({}, sceneData);
-        newState.scenes[sceneData.currentSceneIdx].type = event.target.value;
-        setSceneData(newState)
+        dispatch(changeSceneType(event.target.value))
     }
 
     const handleChangeSceneName = (event: any) => {
-        const newState = Object.assign({}, sceneData);
-        newState.scenes[sceneData.currentSceneIdx].sceneName = event.target.value;
-        setSceneData(newState)
+        dispatch(changeSceneName(event.target.value))
     }
 
     const isPrevDisabled = () => {
@@ -65,36 +61,15 @@ export const SceneMetaData = ({ setSceneData, sceneData, diagramHoveredElement }
             return;
         }
 
-        const newState = Object.assign({}, sceneData);
-        newState.currentSceneIdx = newState.currentSceneIdx + direction;
-        setSceneData(newState)
+        dispatch(changeScene(direction))
     }
 
     const addScene = () => {
-        const newScene = {
-            "sceneName": `Scene ${sceneData.scenes.length + 1}`,
-            "type": "view",
-            "actions": []
-        }
-        const newState = Object.assign({}, sceneData);
-        newState.scenes.push(newScene)
-        newState.currentSceneIdx = sceneData.scenes.length - 1
-        setSceneData(newState)
+        dispatch(addNewScene())
     }
 
     const copyScene = () => {
-        const sceneActions = sceneData.scenes[sceneData.currentSceneIdx].actions.map((action: any) => ({ ...action }));
-        const newScene = {
-            "type": sceneData.scenes[sceneData.currentSceneIdx].type,
-            "sceneName": `Scene ${sceneData.scenes.length + 1}`,
-            "actions": sceneActions
-        }
-
-
-        const newState = Object.assign({}, sceneData);
-        newState.scenes.push(newScene)
-        newState.currentSceneIdx = sceneData.scenes.length - 1
-        setSceneData(newState)
+        dispatch(addSceneCopy())
     }
 
     return (

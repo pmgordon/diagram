@@ -2,18 +2,12 @@
 import { ChangeEvent } from "react";
 import Button from '@mui/material/Button';
 import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { useSelector, useDispatch } from 'react-redux'
+import type { RootState } from '../../store'
+import { migrateState, setSvgDiagram, setEffectElements, EffectElementType } from "../../appSlice";
+import { updateTabValue, setSvgUploadDisabled } from "./toolBoxSlice";
 
-export declare interface UploadButtonProps {
-    setSvgDiagram: React.Dispatch<React.SetStateAction<Element | undefined>>
-    setEffectElements: React.Dispatch<React.SetStateAction<any | undefined>>
-    setTabValue: React.Dispatch<React.SetStateAction<any | undefined>>
-    setSceneData: React.Dispatch<React.SetStateAction<any | undefined>>
-    sceneData: any
-    svgUploadDisabled: boolean
-    setSvgUploadDisabled: any
-}
-
-const getEffectElements = (svg: Element) => {
+const getEffectElements = (svg: Element): EffectElementType[] => {
     const elements = svg.querySelectorAll('[diagram-effect-id]');
     const propertyValues = Array.from(elements).map(element => ({
         id: element.getAttribute('diagram-effect-id'),
@@ -25,7 +19,8 @@ const getEffectElements = (svg: Element) => {
 const replaceIds = (svg: Element) => {
     const paths = Array.from(svg.getElementsByTagName("path") as HTMLCollectionOf<SVGPathElement>);
     let currentId = 0
-    svg.id = "diagram-effect-svg";
+    // svg.id = "diagram-effect-svg"; # TODO: Make a fix for this
+    svg.setAttribute("diagram-effect-svg", "diagram-effect-svg")
     for (const pth of paths) {
         if (pth.id === '') {
             pth.id = `diagram-path-effect-${currentId}`;
@@ -88,8 +83,6 @@ const reformatSVG = (svg: NodeListOf<ChildNode>, fileType: string): Element => {
         }
     }
 
-
-
     if (!svgElement) {
         throw new Error('No svg element found');
     }
@@ -100,18 +93,15 @@ const reformatSVG = (svg: NodeListOf<ChildNode>, fileType: string): Element => {
     return svgElement;
 }
 
-const UploadButton = ({ setSceneData, 
-                        sceneData,
-                        setSvgDiagram, 
-                        setEffectElements, 
-                        setTabValue, 
-                        setSvgUploadDisabled, 
-                        svgUploadDisabled }: UploadButtonProps) => {
+const UploadButton = () => {
     const htmlToNodes = (html: string) => {
         const template = document.createElement('template');
         template.innerHTML = html;
         return template.content.childNodes;
     }
+
+    const dispatch = useDispatch()
+    const svgUploadDisabled= useSelector((state: RootState) => state.toolbox.svgUploadDisabled)
 
     const handleSetScene = (htmlText: string) => {
         const matches = htmlText.match(/const sceneData = (.*?)\n/)
@@ -119,11 +109,7 @@ const UploadButton = ({ setSceneData,
             return
         }
         const parsedScene = JSON.parse(matches[1])
-        // const newState = Object.assign({}, sceneData);
-        // newState.currentSceneIdx = 0;
-        // newState.scenes.concat(parsedScene.secenes)
-        setSceneData(parsedScene)
-
+        dispatch(migrateState(parsedScene))
     }
 
     const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
@@ -151,15 +137,15 @@ const UploadButton = ({ setSceneData,
             const formattedSVG = reformatSVG(nodes, fileType)
             const effectElements = getEffectElements(formattedSVG);
 
-            setSvgDiagram(formattedSVG);
-            setEffectElements(effectElements);
+            dispatch(setSvgDiagram(formattedSVG.outerHTML));
+            dispatch(setEffectElements(effectElements))
 
             if (fileType === 'html'){
                 handleSetScene(evt.target.result)
             }
 
-            setSvgUploadDisabled(true)
-            setTabValue("2")
+            dispatch(setSvgUploadDisabled(true))
+            dispatch(updateTabValue("3"))
 
 
         };
